@@ -1,0 +1,13 @@
+# Emacs temp files
+*~
+
+# Compiled list files
+.smex-items
+elpa/*
+places
+eshell/*
+projectile-bookmarks.eld
+var/pcache/*
+/.org-id-locations
+/session.*
+/tramp
