@@ -15,8 +15,11 @@
 (dolist (p my-packages)
   (when (not (package-installed-p p))
     (package-install p)))
-  
-(load-theme 'monokai t)
+
+(add-to-list 'load-path "~/.emacs.d/custom")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+;; (load-theme 'monokai t)
 
 ;; Display line and column numbers in mode line.
 (line-number-mode t)
@@ -52,3 +55,9 @@
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.gsp?\\'" . web-mode))
+
+;; (require 'no-easy-keys)
+(load "no-easy-keys.el")
+(no-easy-keys 1)
+
+(load "cross-platform-copy-paste.el")
