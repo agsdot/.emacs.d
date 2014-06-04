@@ -9,7 +9,7 @@
   (package-refresh-contents))
 
 (defvar my-packages
-  '(solarized-theme monokai-theme evil-nerd-commenter dirtree projectile  git-gutter)
+  '(solarized-theme monokai-theme evil-nerd-commenter dirtree projectile git-gutter undo-tree ido web-mode)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -43,3 +43,12 @@
 
 ;; y/n instead of yes/no
 (defalias 'yes-or-no-p 'y-or-n-p)
+
+(require 'evil)
+(evil-mode 0)
+; Make horizontal movement cross lines                          
+(setq-default evil-cross-lines t)
+
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.gsp?\\'" . web-mode))
