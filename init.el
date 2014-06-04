@@ -40,3 +40,6 @@
 ;; enable seeing of git diffs
 (require 'git-gutter)
 (global-git-gutter-mode +1)
+
+;; y/n instead of yes/no
+(defalias 'yes-or-no-p 'y-or-n-p)
