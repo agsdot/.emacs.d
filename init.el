@@ -9,7 +9,25 @@
   (package-refresh-contents))
 
 (defvar my-packages
-  '(solarized-theme monokai-theme evil-nerd-commenter dirtree projectile git-gutter undo-tree ido web-mode)
+  '(solarized-theme 
+    monokai-theme 
+    zenburn-theme
+    nzenburn-theme
+
+    ido
+    ido-vertical-mode
+    dirtree 
+    undo-tree 
+    
+    projectile 
+    evil-nerd-commenter 
+
+    evil
+
+    git-gutter
+ 
+    web-mode
+    )
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -19,7 +37,8 @@
 (add-to-list 'load-path "~/.emacs.d/custom")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
-;; (load-theme 'monokai t)
+
+(load-theme 'nzenburn t)
 
 ;; Display line and column numbers in mode line.
 (line-number-mode t)
@@ -47,17 +66,29 @@
 ;; y/n instead of yes/no
 (defalias 'yes-or-no-p 'y-or-n-p)
 
+;;;vim navigation
 (require 'evil)
 (evil-mode 0)
+
 ; Make horizontal movement cross lines                          
 (setq-default evil-cross-lines t)
+
+;; (require 'no-easy-keys)
+(load "no-easy-keys.el")
+(no-easy-keys t)
+
+;; cross platform copy paste
+(load "cross-platform-copy-paste.el")
+
+;; menu bar visibility
+(menu-bar-mode -1)
+
+;; ido mode configs
+(require 'ido)
+(require 'ido-vertical-mode)
+(ido-mode t)
+(ido-vertical-mode t)
 
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.gsp?\\'" . web-mode))
-
-;; (require 'no-easy-keys)
-(load "no-easy-keys.el")
-(no-easy-keys 1)
-
-(load "cross-platform-copy-paste.el")
