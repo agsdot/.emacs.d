@@ -16,11 +16,14 @@
 
     ido
     ido-vertical-mode
-    dirtree 
-    undo-tree 
+    smex
     
     projectile 
     evil-nerd-commenter 
+    crosshairs 
+    dirtree 
+    undo-tree 
+    project-explorer
 
     evil
 
@@ -44,6 +47,7 @@
 (line-number-mode t)
 (column-number-mode t)
 (global-linum-mode t)
+
 
 ;; Disable the creation of backup files.
 (setq backup-inhibited t)
@@ -89,6 +93,27 @@
 (ido-mode t)
 (ido-vertical-mode t)
 
+(require 'smex) ; Not needed if you use package.el
+(smex-initialize)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.gsp?\\'" . web-mode))
+
+;; C-x C-j opens dired with the cursor right on the file you're editing
+(require 'dired-x)
+
+;; copy/paste with C-c and C-v and C-x, check out C-RET too
+(cua-mode)
+
+;; Turn off ding
+(setq visible-bell 1)
+
+(require 'crosshairs)
+(toggle-crosshairs-when-idle 15)
+
+(require 'project-explorer) 
