@@ -25,6 +25,7 @@
     undo-tree 
     project-explorer
     powerline 
+    ace-jump-mode    
 
     evil
 
@@ -81,7 +82,7 @@
 
 ;; (require 'no-easy-keys)
 (load "no-easy-keys.el")
-(no-easy-keys t)
+(no-easy-keys 0)
 
 ;; menu bar visibility
 (menu-bar-mode -1)
@@ -106,7 +107,10 @@
 (setq visible-bell 1)
 
 (require 'crosshairs)
-(toggle-crosshairs-when-idle 15)
+(toggle-crosshairs-when-idle 30)
+
+(require 'ace-jump-mode)
+(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
 
 ;; copy/paste with C-c and C-v and C-x, check out C-RET too
 (cua-mode)
@@ -131,3 +135,4 @@
 (add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
 (add-to-list 'auto-mode-alist '("\.gradle$" . groovy-mode))
 (add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))
+
