@@ -24,12 +24,14 @@
     dirtree 
     undo-tree 
     project-explorer
+    powerline 
 
     evil
 
     git-gutter
  
     web-mode
+    groovy-mode
     )
   "A list of packages to ensure are installed at launch.")
 
@@ -48,17 +50,24 @@
 (column-number-mode t)
 (global-linum-mode t)
 
-
 ;; Disable the creation of backup files.
 (setq backup-inhibited t)
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 
-;; enable evil nerd commenter commenting 
+;; enable evil nerd commenter commenting, works in emacs mode and vim/evil mode 
 (evilnc-default-hotkeys)
 
-;; enable dirtree 
+;;;vim navigation
+(require 'evil)
+(defalias 'em 'evil-mode)
+(evil-mode 0)
+; Make horizontal movement cross lines                          
+(setq-default evil-cross-lines t)
+
+;; enable sidebar file managers 
 (autoload 'dirtree "dirtree" "Add directory to tree view" t)
+(require 'project-explorer) 
 
 ;; fast file management
 (projectile-global-mode)
@@ -70,19 +79,9 @@
 ;; y/n instead of yes/no
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-;;;vim navigation
-(require 'evil)
-(evil-mode 0)
-
-; Make horizontal movement cross lines                          
-(setq-default evil-cross-lines t)
-
 ;; (require 'no-easy-keys)
 (load "no-easy-keys.el")
 (no-easy-keys t)
-
-;; cross platform copy paste
-(load "cross-platform-copy-paste.el")
 
 ;; menu bar visibility
 (menu-bar-mode -1)
@@ -100,15 +99,8 @@
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
-(require 'web-mode)
-(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.gsp?\\'" . web-mode))
-
 ;; C-x C-j opens dired with the cursor right on the file you're editing
 (require 'dired-x)
-
-;; copy/paste with C-c and C-v and C-x, check out C-RET too
-(cua-mode)
 
 ;; Turn off ding
 (setq visible-bell 1)
@@ -116,4 +108,26 @@
 (require 'crosshairs)
 (toggle-crosshairs-when-idle 15)
 
-(require 'project-explorer) 
+;; copy/paste with C-c and C-v and C-x, check out C-RET too
+(cua-mode)
+;; cross platform copy paste
+(load "cross-platform-copy-paste.el")
+
+;; From http://ergoemacs.org/emacs/emacs_best_redo_mode.html
+(require 'undo-tree)
+(global-undo-tree-mode t)
+(defalias 'redo 'undo-tree-redo)
+(global-set-key (kbd "C-z") 'undo) ; 【Ctrl+z】
+(global-set-key (kbd "C-S-z") 'redo) ; 【Ctrl+Shift+z】;  Mac style
+(global-set-key (kbd "C-y") 'redo) ; 【Ctrl+y】; Microsoft Windows style
+
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.gsp?\\'" . web-mode))
+
+;;; use groovy-mode when file ends in .groovy or has #!/bin/groovy at start
+(require 'groovy-mode)
+(autoload 'groovy-mode "groovy-mode" "Major mode for editing Groovy code." t)
+(add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
+(add-to-list 'auto-mode-alist '("\.gradle$" . groovy-mode))
+(add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))
