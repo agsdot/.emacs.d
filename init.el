@@ -162,6 +162,28 @@
       '((space-mark 32 [183] [46]) 
         (tab-mark 9 [9655 9] [92 9])))
 
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-menu-items 25)
+(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+
+;; Dont display logo at startup
+(setq inhibit-startup-message t)
+
+;; Add powerline to replace default emacs bar
+(require 'powerline)
+(powerline-default-theme)
+(setq powerline-arrow-shape 'arrow)   ;; the default
+(setq powerline-arrow-shape 'curve)   ;; give your mode-line curves
+(setq powerline-arrow-shape 'arrow14) ;; best for small fonts
+(setq powerline-default-theme nil)
+
+;; http://stackoverflow.com/questions/2592095/how-do-i-create-an-empty-file-in-emacs
+;; (add-hook 'find-file-hooks 'assume-new-is-modified)
+;; (defun assume-new-is-modified ()
+;;   (when (not (file-exists-p (buffer-file-name)))
+;;     (set-buffer-modified-p t)))
+
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.gsp?\\'" . web-mode))
