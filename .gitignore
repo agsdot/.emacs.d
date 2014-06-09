@@ -7,6 +7,7 @@ elpa/*
 places
 eshell/*
 projectile-bookmarks.eld
+projectile.cache
 var/pcache/*
 /.org-id-locations
 /session.*

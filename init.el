@@ -9,10 +9,13 @@
   (package-refresh-contents))
 
 (defvar my-packages
-  '(solarized-theme 
+  '(color-theme
+    solarized-theme 
     monokai-theme 
     zenburn-theme
     nzenburn-theme
+    color-theme-sanityinc-tomorrow 
+    base16-theme
 
     ido
     ido-vertical-mode
@@ -26,11 +29,12 @@
     project-explorer
     powerline 
     ace-jump-mode    
+    rainbow-delimiters
 
     evil
 
     git-gutter
- 
+
     web-mode
     groovy-mode
     )
@@ -44,7 +48,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
 
-(load-theme 'nzenburn t)
+(load-theme 'sanityinc-tomorrow-eighties t) 
 
 ;; Display line and column numbers in mode line.
 (line-number-mode t)
@@ -63,7 +67,7 @@
 (require 'evil)
 (defalias 'em 'evil-mode)
 (evil-mode 0)
-; Make horizontal movement cross lines                          
+; Make horizontal movement cross lines
 (setq-default evil-cross-lines t)
 
 ;; enable sidebar file managers 
@@ -112,6 +116,15 @@
 (require 'ace-jump-mode)
 (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
 
+;; FIX SHIFT-UP
+;; from http://stackoverflow.com/questions/10871745/shift-up-arrow-doesnt-highlight-text-emacs-iterm2
+;; and http://lists.gnu.org/archive/html/help-gnu-emacs/2011-05/msg00211.html
+(define-key input-decode-map "\e[1;2A" [S-up])
+(if (equal "xterm" (tty-type))
+    (define-key input-decode-map "\e[1;2A" [S-up]))
+(defadvice terminal-init-xterm (after select-shift-up activate)
+  (define-key input-decode-map "\e[1;2A" [S-up]))
+
 ;; copy/paste with C-c and C-v and C-x, check out C-RET too
 (cua-mode)
 ;; cross platform copy paste
@@ -125,6 +138,30 @@
 (global-set-key (kbd "C-S-z") 'redo) ; 【Ctrl+Shift+z】;  Mac style
 (global-set-key (kbd "C-y") 'redo) ; 【Ctrl+y】; Microsoft Windows style
 
+(electric-pair-mode 1)
+(show-paren-mode 1)
+
+(setq-default tab-width 2)
+(require 'rainbow-delimiters)
+(global-rainbow-delimiters-mode)
+
+;; Fast cursor movement in vertical direction with Meta.
+(global-set-key (kbd "M-n") (lambda () (interactive) (next-line 5)))
+(global-set-key (kbd "M-p") (lambda () (interactive) (previous-line 5)))
+
+(global-set-key (kbd "M-g") 'goto-line)
+(global-set-key (kbd "C-x C-b") 'buffer-menu)
+(global-set-key (kbd "C-a") 'mark-whole-buffer)
+(global-set-key (kbd "C-c C-p") 'projectile-find-file)
+(global-set-key (kbd "C-c C-f") 'projectile-grep)
+
+(require 'whitespace)
+(global-whitespace-mode)
+(setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
+(setq whitespace-display-mappings
+      '((space-mark 32 [183] [46]) 
+        (tab-mark 9 [9655 9] [92 9])))
+
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.gsp?\\'" . web-mode))
@@ -135,4 +172,3 @@
 (add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
 (add-to-list 'auto-mode-alist '("\.gradle$" . groovy-mode))
 (add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))
-
