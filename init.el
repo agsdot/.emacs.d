@@ -32,7 +32,7 @@
     rainbow-delimiters
 
     evil
-
+    evil-leader
     git-gutter
 
     web-mode
@@ -60,22 +60,15 @@
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 
+;; fast file management
+(projectile-global-mode)
+
 ;; enable evil nerd commenter commenting, works in emacs mode and vim/evil mode 
 (evilnc-default-hotkeys)
-
-;;;vim navigation
-(require 'evil)
-(defalias 'em 'evil-mode)
-(evil-mode 1)
-; Make horizontal movement cross lines
-(setq-default evil-cross-lines t)
 
 ;; enable sidebar file managers 
 (autoload 'dirtree "dirtree" "Add directory to tree view" t)
 (require 'project-explorer) 
-
-;; fast file management
-(projectile-global-mode)
 
 ;; enable seeing of git diffs
 (require 'git-gutter)
@@ -193,3 +186,19 @@
 (add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
 (add-to-list 'auto-mode-alist '("\.gradle$" . groovy-mode))
 (add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))
+
+;;;vim navigation
+(require 'evil)
+(defalias 'em 'evil-mode)
+(evil-mode 1)
+(global-evil-leader-mode)
+; Make horizontal movement cross lines
+(setq-default evil-cross-lines t)
+; (after "evil-leader-autoloads"
+    (evil-leader/set-leader ",")
+    (evil-leader/set-key
+      "f" 'projectile-grep
+      "p" 'projectile-find-file
+      "r" 'recentf-open-files
+      "b" 'buffer-menu
+)
