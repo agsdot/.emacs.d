@@ -66,7 +66,7 @@
 ;;;vim navigation
 (require 'evil)
 (defalias 'em 'evil-mode)
-(evil-mode 0)
+(evil-mode 1)
 ; Make horizontal movement cross lines
 (setq-default evil-cross-lines t)
 
@@ -85,8 +85,8 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; (require 'no-easy-keys)
-(load "no-easy-keys.el")
-(no-easy-keys 0)
+;;(load "no-easy-keys.el")
+;;(no-easy-keys 0)
 
 ;; menu bar visibility
 (menu-bar-mode -1)
@@ -106,7 +106,6 @@
 
 ;; C-x C-j opens dired with the cursor right on the file you're editing
 (require 'dired-x)
-
 ;; Turn off ding
 (setq visible-bell 1)
 
@@ -151,7 +150,7 @@
 
 (global-set-key (kbd "M-g") 'goto-line)
 (global-set-key (kbd "C-x C-b") 'buffer-menu)
-(global-set-key (kbd "C-a") 'mark-whole-buffer)
+;; (global-set-key (kbd "C-a") 'mark-whole-buffer)
 (global-set-key (kbd "C-c C-p") 'projectile-find-file)
 (global-set-key (kbd "C-c C-f") 'projectile-grep)
 
