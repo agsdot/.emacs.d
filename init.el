@@ -10,25 +10,26 @@
 
 (defvar my-packages
   '(color-theme
-    solarized-theme 
-    monokai-theme 
+    solarized-theme
+    monokai-theme
     zenburn-theme
     nzenburn-theme
-    color-theme-sanityinc-tomorrow 
+    color-theme-sanityinc-tomorrow
     base16-theme
 
     ido
     ido-vertical-mode
     smex
-    
-    projectile 
-    evil-nerd-commenter 
-    crosshairs 
-    dirtree 
-    undo-tree 
-    project-explorer
-    powerline 
-    ace-jump-mode    
+    key-chord
+
+    projectile
+    evil-nerd-commenter
+    crosshairs
+    ;dirtree
+    undo-tree
+    ;project-explorer
+    powerline
+    ace-jump-mode
     rainbow-delimiters
 
     evil
@@ -45,10 +46,11 @@
     (package-install p)))
 
 (add-to-list 'load-path "~/.emacs.d/custom")
+(add-to-list 'load-path "~/.emacs.d/custom/neotree")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(load-theme 'sanityinc-tomorrow-eighties t) 
+(load-theme 'sanityinc-tomorrow-eighties t)
 
 ;; Display line and column numbers in mode line.
 (line-number-mode t)
@@ -63,12 +65,13 @@
 ;; fast file management
 (projectile-global-mode)
 
-;; enable evil nerd commenter commenting, works in emacs mode and vim/evil mode 
+;; enable evil nerd commenter commenting, works in emacs mode and vim/evil mode
 (evilnc-default-hotkeys)
 
-;; enable sidebar file managers 
-(autoload 'dirtree "dirtree" "Add directory to tree view" t)
-(require 'project-explorer) 
+;; enable sidebar file managers
+;(autoload 'dirtree "dirtree" "Add directory to tree view" t)
+;(require 'project-explorer)
+(require 'neotree)
 
 ;; enable seeing of git diffs
 (require 'git-gutter)
@@ -151,7 +154,7 @@
 (global-whitespace-mode)
 (setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
 (setq whitespace-display-mappings
-      '((space-mark 32 [183] [46]) 
+      '((space-mark 32 [183] [46])
         (tab-mark 9 [9655 9] [92 9])))
 
 (require 'recentf)
@@ -206,4 +209,41 @@
       "p" 'projectile-find-file
       "r" 'recentf-open-files
       "b" 'buffer-menu
+      "n" 'neotree-toggle
+      "/" 'evilnc-comment-or-uncomment-lines
 )
+
+;; press k j in rapid succesion to escape
+;; http://stackoverflow.com/questions/10569165/how-to-map-jj-to-esc-in-emacs-evil-mode
+(define-key evil-insert-state-map "k" #'cofi/maybe-exit)
+
+(evil-define-command cofi/maybe-exit ()
+  :repeat change
+  (interactive)
+  (let ((modified (buffer-modified-p)))
+    (insert "k")
+    (let ((evt (read-event (format "Insert %c to exit insert state" ?j)
+               nil 0.5)))
+      (cond
+       ((null evt) (message ""))
+       ((and (integerp evt) (char-equal evt ?j))
+    (delete-char -1)
+    (set-buffer-modified-p modified)
+    (push 'escape unread-command-events))
+       (t (setq unread-command-events (append unread-command-events
+                          (list evt))))))))
+
+;; Press jj in rapid succession to escape 
+;; Whoa..two ways to do the same things, the above function and below with the key-chord-mode plugin
+(setq key-chord-two-keys-delay 0.2)
+;; from http://bbbscarter.wordpress.com/category/coding/emacs/
+(key-chord-mode 1)
+(setq key-chord-two-keys-delay 0.2)
+(key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
+
+;;Make evil-mode up/down operate in screen lines instead of logical lines
+(define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+(define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+
+(define-key evil-normal-state-map ";" 'evil-ex)
+
