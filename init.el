@@ -13,7 +13,6 @@
     solarized-theme
     monokai-theme
     zenburn-theme
-    nzenburn-theme
     color-theme-sanityinc-tomorrow
     base16-theme
 
@@ -246,4 +245,3 @@
 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 
 (define-key evil-normal-state-map ";" 'evil-ex)
-
