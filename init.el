@@ -18,6 +18,7 @@
 
     ido
     ido-vertical-mode
+    flx-ido
     smex
     key-chord
 
@@ -30,6 +31,7 @@
     powerline
     ace-jump-mode
     rainbow-delimiters
+    paradox
 
     evil
     evil-leader
@@ -37,6 +39,9 @@
 
     web-mode
     groovy-mode
+    js2-mode
+
+    company
     )
   "A list of packages to ensure are installed at launch.")
 
@@ -245,3 +250,24 @@
 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 
 (define-key evil-normal-state-map ";" 'evil-ex)
+(define-key evil-normal-state-map ":" 'smex)
+
+;; flx-ido completion system, recommended by Projectile
+;; http://www.swaroopch.com/2013/10/17/emacs-configuration-tutorial/
+;; whoa...yeah!!! 6/27/14, this makes projectile behave just like ctrlp in vim! yeah!!!
+(require 'flx-ido)
+(flx-ido-mode 1)
+;; change it if you have a fast processor.
+(setq flx-ido-threshhold 1000)
+
+;;; paradox - Package management with GitHub integration
+;;; https://github.com/Bruce-Connor/paradox
+;; (require 'paradox)
+;; automatically star packages I install on GitHub
+;; (setq paradox-automatically-star t)
+
+(add-hook 'after-init-hook 'global-company-mode)
+
+;; Esc => jj... as in Vim...
+;;(define-jey evil-insert-state-map  "")
+;; https://github.com/ahmadseleem/ViMacs/blob/master/evil/vimacs.el
