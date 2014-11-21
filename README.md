@@ -46,3 +46,9 @@ Helpful websites:
       - has evil leader setup
 
   - http://nathantypanski.com/blog/2014-08-03-a-vim-like-emacs-config.html#use-packageL
+
+  - https://github.com/noaham/dot_emacs/blob/master/init.md
+
+  - https://github.com/kluge/emacs.d/blob/master/init.el
+
+  - https://github.com/samdoshi/.emacs.d/blob/master/emacs-init.org
