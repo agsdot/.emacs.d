@@ -1,13 +1,6 @@
-My .emacs.d/ configs
-
-Real brief intro, I'll spruce up this README soon/later.
+My .emacs.d/ configs, synced up with what has been on my dotfiles [repo](github.com/agsdot/dotfiles), as of November 2014.  
 
 git clone https://github.com/agsdot/.emacs.d.git ~/.emacs.d  
-cd ~/.emacs.d  
-git submodule init  
-git submodule update  
-
-Basically pull in my .emacs.d configs and then source the submodules, which now includes neotree.
 
 Enjoy,
 
