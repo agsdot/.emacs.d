@@ -52,3 +52,6 @@ Helpful websites:
   - https://github.com/kluge/emacs.d/blob/master/init.el
 
   - https://github.com/samdoshi/.emacs.d/blob/master/emacs-init.org
+
+  - https://github.com/samdoshi/.emacs.d/blob/master/.gitignore
+    - good org mode init example
