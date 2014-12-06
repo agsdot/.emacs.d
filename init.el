@@ -5,9 +5,9 @@
 (eval-when-compile (package-initialize))
 
 (if (not (package-installed-p 'use-package))
-    (progn
-      (package-refresh-contents)
-      (package-install 'use-package)))
+  (progn
+    (package-refresh-contents)
+    (package-install 'use-package)))
 
 (require 'use-package)
 
@@ -18,7 +18,6 @@
 (use-package esup
   :ensure esup)
 
-;;;;;
 (defcustom dotemacs-cache-directory (concat user-emacs-directory ".cache/")
   "The storage location for various persistent files.")
 
@@ -33,7 +32,7 @@
 
 (use-package f
   :ensure f
-  :init
+  :config
   (progn
     (unless (f-exists? dotemacs-cache-directory)
       (f-mkdir dotemacs-cache-directory))))
@@ -102,7 +101,7 @@
 
 (use-package whitespace
   :ensure whitespace
-  :init
+  :config
   (progn
     (setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
     (setq whitespace-display-mappings
@@ -131,10 +130,10 @@
 ;; https://github.com/krobertson/emacs.d/blob/master/packages.el
 (use-package projectile
   :ensure projectile
-  :init
+  :config
   (progn
     (projectile-global-mode 1))
-  :config
+  :init
   (progn
     (setq projectile-known-projects-file (concat dotemacs-cache-directory "projectile-bookmarks.eld"))
     (setq projectile-require-project-root nil)))
@@ -153,28 +152,24 @@
 ;; ido mode configs
 (use-package ido-vertical-mode
   :ensure ido-vertical-mode
-  :init
+  :config
   (progn
     (ido-vertical-mode t)))
 
 ;; https://github.com/bdd/.emacs.d/blob/master/packages.el
 (use-package flx-ido
   :ensure flx-ido
-  :init
-  (progn
-    (flx-ido-mode 1))
   :config
   (progn
+    (flx-ido-mode 1)
     (setq flx-ido-threshhold 1000)
     (setq gc-cons-threshold 20000000)))
 
 (use-package saveplace
   :ensure saveplace
-  :init
-  (progn
-    (setq-default save-place t))
   :config
   (progn
+    (setq-default save-place t)
     (setq save-place-forget-unreadable-files nil)
     ;; Try to make emacsclient play nice with saveplace
     ;; http://www.emacswiki.org/emacs/EmacsClient#toc35
@@ -190,7 +185,7 @@
 (use-package git-gutter
   :ensure git-gutter
   :diminish git-gutter-mode
-  :init
+  :config
   (progn
     (global-git-gutter-mode 1)))
 
@@ -199,7 +194,7 @@
 
 (use-package magit
   :ensure magit
-  :init
+  :config
   (progn
     ;; http://whattheemacsd.com/setup-magit.el-01.html
     (defadvice magit-status (around magit-fullscreen activate)
@@ -256,7 +251,7 @@
 ;; How to set defcustom variable
 (use-package linum-relative
   :ensure linum-relative
-  :init
+  :config
   (progn
     (setq linum-relative-format "%3s ")
     (setq linum-relative-current-symbol "")))
