@@ -132,11 +132,8 @@
   :init (projectile-global-mode 1)
   :config
   (progn
-    (use-package grizzl
-      :ensure grizzl)
     (setq projectile-known-projects-file (concat dotemacs-cache-directory "projectile-bookmarks.eld"))
-    (setq projectile-require-project-root nil)
-    (setq projectile-completion-system 'grizzl)))
+    (setq projectile-require-project-root nil)))
 
 (use-package ace-jump-mode
   :ensure ace-jump-mode
@@ -182,10 +179,16 @@
 ;; coding ;;
 
 ;; enable seeing of git diffs
+;; got git-gutter working properly with use-package
+;; https://github.com/hlissner/emacs.d/blob/master/init/init-git.el
 (use-package git-gutter
   :ensure git-gutter
+  :diminish git-gutter-mode
   :init
-    global-git-gutter-mode +1)
+  (global-git-gutter-mode 1))
+
+(use-package git-timemachine
+  :ensure git-timemachine)
 
 (use-package magit
   :ensure magit
@@ -290,8 +293,8 @@
     ;; Make horizontal movement cross lines
     (setq-default evil-cross-lines t)
 
-    (define-key evil-normal-state-map (kbd "C-w }") 'evil-window-rotate-downwards)
-    (define-key evil-normal-state-map (kbd "C-w {") 'evil-window-rotate-upwards)
+    (define-key evil-normal-state-map (kbd "C-w ]") 'evil-window-rotate-downwards)
+    (define-key evil-normal-state-map (kbd "C-w [") 'evil-window-rotate-upwards)
 
     (define-key evil-normal-state-map (kbd "C-h")   'evil-window-left)
     (define-key evil-normal-state-map (kbd "C-j")   'evil-window-down)
@@ -342,11 +345,9 @@
 
     (use-package evil-matchit
       :ensure evil-matchit
-      :commands evilmi-jump-items
-      :init
+      :config
       (progn
-        (setq global-evil-matchit-mode t)
-        (define-key evil-normal-state-map "%" 'evilmi-jump-items)))
+        (global-evil-matchit-mode 1)))
 
     (use-package evil-surround
       :ensure evil-surround
