@@ -55,3 +55,6 @@ Helpful websites:
 
   - https://github.com/samdoshi/.emacs.d/blob/master/.gitignore
     - good org mode init example
+
+  - https://github.com/dakrone/dakrone-dotfiles/blob/master/.emacs.d/settings.org
+    - another good org mode example with use-package

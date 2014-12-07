@@ -1,4 +1,17 @@
-(require 'ob-tangle)
-(org-babel-load-file
-  (expand-file-name "emacs-init.org" user-emacs-directory))
-;(org-babel-load-file "~/.emacs.d/emacs-init.org")
+(require 'package)
+(setq package-archives '(("melpa" . "http://melpa.org/packages/")
+                         ("org" . "http://orgmode.org/elpa/")
+                         ("gnu" . "http://elpa.gnu.org/packages/")))
+(eval-when-compile (package-initialize))
+
+(if (not (package-installed-p 'use-package))
+  (progn
+    (package-refresh-contents)
+    (package-install 'use-package)))
+
+(require 'use-package)
+
+(use-package org
+  :ensure org)
+
+(org-babel-load-file (expand-file-name "emacs-init.org" user-emacs-directory))
