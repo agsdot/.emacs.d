@@ -70,12 +70,8 @@ Here lets put in some good defaults for emacs, including setting some system wid
 
 (use-package cross-platform-copy-paste)
 
-(use-package recentf
-  :config
-  (progn
-    (recentf-mode 1)
-    (setq recentf-max-menu-items 25)
-    (setq recentf-save-file (concat dotemacs-cache-directory "recentf"))))
+(setq recentf-save-file (concat dotemacs-cache-directory "recentf"))
+(recentf-mode 1)
 
 (setq-default tab-width 2)
 (setq-default indent-tabs-mode nil) ;; seems to affect autocomplete modes
@@ -277,7 +273,7 @@ Here we're going to make emacs a great coding environment.
       ((executable-find "ack")
         (progn
           (use-package ack-and-a-half
-            :ensure ack) ;; https://github.com/jhelwig/ack-and-a-half
+            :ensure ack-and-a-half) ;; https://github.com/jhelwig/ack-and-a-half
           (defalias 'my-search-util 'projectile-ack)))  ;; faster than grep
       ((executable-find "grep")
         (progn
