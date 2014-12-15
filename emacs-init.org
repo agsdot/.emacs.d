@@ -383,14 +383,12 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
       (progn
         (global-evil-surround-mode 1)))
 
+    (setq evil-jumper-auto-center t)
+    (setq evil-jumper-file (concat dotemacs-cache-directory "evil-jumps"))
+    (setq evil-jumper-auto-save-interval 120)
+    (setq evil-jumper-max-length 10)
     (use-package evil-jumper
-      :ensure evil-jumper
-      :config
-      (progn
-        (setq evil-jumper-auto-center t)
-        (setq evil-jumper-file (concat dotemacs-cache-directory "evil-jumps"))
-        (setq evil-jumper-auto-save-interval 120)
-        (setq evil-jumper-max-length 10)))
+      :ensure evil-jumper)
 
     (use-package evil-numbers
       :ensure evil-numbers
