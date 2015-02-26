@@ -72,7 +72,7 @@ Here lets put in some good defaults for emacs, including setting some system wid
     (auto-package-update-maybe)))
 
 ;; Don't automatically add newline to end of file
-(setq mode-require-final-newline nil)
+;; (setq mode-require-final-newline nil)
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
