@@ -233,6 +233,9 @@ Here we're going to make emacs a great coding environment.
   :config
   (progn
     ;; http://whattheemacsd.com/setup-magit.el-01.html
+    (defalias 'mgst 'magit-status)
+    (defalias 'gst 'magit-status)
+    (defalias 'st 'magit-status)
     (defadvice magit-status (around magit-fullscreen activate)
       (window-configuration-to-register :magit-fullscreen)
       ad-do-it
