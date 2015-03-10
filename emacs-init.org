@@ -90,6 +90,10 @@ Here lets put in some good defaults for emacs, including setting some system wid
 (use-package cross-platform-copy-paste)
 
 (setq recentf-save-file (concat dotemacs-cache-directory "recentf"))
+(if (not (f-exists? recentf-save-file))
+  (progn
+    (f-touch recentf-save-file)
+    (f-write "(setq recentf-list '( \"~/.emacs.d/README.md\")) (setq recentf-filter-changer-current 'nil)" 'utf-8 recentf-save-file)))
 (setq recentf-max-menu-items 10)
 (setq recentf-auto-cleanup 'never)
 (recentf-mode 1)
