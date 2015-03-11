@@ -420,6 +420,12 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
       (progn
         (global-evil-jumper-mode t)))
 
+    (use-package evil-visualstar
+      :ensure evil-visualstar
+      :config
+      (progn
+        (global-evil-visualstar-mode)))
+
     (use-package evil-numbers
       :ensure evil-numbers
       :config
