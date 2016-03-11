@@ -151,9 +151,6 @@ Lets make emacs look and behave better.
 Gotta navigate around emacs more efficiently, and this is how.
 
 #+BEGIN_SRC emacs-lisp
-(use-package neotree
-  :ensure neotree)
-
 (use-package smex
   :ensure smex
   :config
@@ -392,6 +389,43 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
           "/" 'evilnc-comment-or-uncomment-lines
           "<down>" 'drag-stuff-down
           "<up>" 'drag-stuff-up)))
+
+    (use-package neotree
+      :ensure neotree
+      :config
+        (progn
+          ;; from https://github.com/andrewmcveigh/emacs.d
+          ;; get keybindings to work better in neotree with evil
+          (defun neotree-copy-file ()
+            (interactive)
+            (let* ((current-path (neo-buffer--get-filename-current-line))
+                   (msg (format "Copy [%s] to: "
+                                (neo-path--file-short-name current-path)))
+                   (to-path (read-file-name msg (file-name-directory current-path))))
+              (dired-copy-file current-path to-path t))
+            (neo-buffer--refresh t))
+
+          (define-minor-mode neotree-evil
+            "Use NERDTree bindings on neotree."
+            :lighter " NT"
+            :keymap (progn
+                      (evil-make-overriding-map neotree-mode-map 'normal t)
+                      (evil-define-key 'normal neotree-mode-map
+                        "C" 'neotree-change-root
+                        "U" 'neotree-select-up-node
+                        "r" 'neotree-refresh
+                        "o" 'neotree-enter
+                        (kbd "<return>") 'neotree-enter
+                        "i" 'neotree-enter-horizontal-split
+                        "s" 'neotree-enter-vertical-split
+                        "n" 'evil-search-next
+                        "N" 'evil-search-previous
+                        "ma" 'neotree-create-node
+                        "mc" 'neotree-copy-file
+                        "md" 'neotree-delete-node
+                        "mm" 'neotree-rename-node
+                        "gg" 'evil-goto-first-line)
+                      neotree-mode-map))))
 
     (use-package evil-nerd-commenter
       :ensure evil-nerd-commenter
