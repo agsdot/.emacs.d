@@ -260,6 +260,11 @@ Here we're going to make emacs a great coding environment.
   (progn
     (add-to-list 'auto-mode-alist '("\\.js?\\'" . js2-mode))))
 
+;; https://github.com/yasuyk/web-beautify
+;; js-beautify installed by typing: npm -g install js-beautify
+(use-package web-beautify
+  :ensure web-beautify)
+
 (use-package groovy-mode
   :ensure groovy-mode
   :config
