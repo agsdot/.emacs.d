@@ -457,6 +457,12 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
       (progn
         (global-evil-visualstar-mode)))
 
+     (use-package evil-tabs
+       :ensure evil-tabs
+       :config
+       (progn
+         (global-evil-tabs-mode t)))
+
     (use-package evil-numbers
       :ensure evil-numbers
       :config
