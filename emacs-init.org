@@ -451,14 +451,6 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
       (progn
         (global-evil-surround-mode 1)))
 
-    (setq evil-jumper-auto-center t)
-    (setq evil-jumper-file (concat dotemacs-cache-directory "evil-jumps"))
-    (use-package evil-jumper
-      :ensure evil-jumper
-      :config
-      (progn
-        (global-evil-jumper-mode t)))
-
     (use-package evil-visualstar
       :ensure evil-visualstar
       :config
