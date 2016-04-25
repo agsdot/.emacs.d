@@ -52,28 +52,6 @@ Here lets put in some good defaults for emacs, including setting some system wid
     (delq (current-buffer)
       (remove-if-not 'buffer-file-name (buffer-list)))))
 
-;; (defun auto-package-update-now ()
-;;   "Update installed Emacs packages."
-;;   (interactive)
-;;   (save-excursion
-;;     (package-refresh-contents)
-;;     (package-list-packages)
-;;     (package-menu-mark-upgrades)
-;;     (package-menu-execute t)
-;;     (kill-buffer))
-;;   (message "[PACKAGES UPDATED]"))
-
-;; (use-package auto-package-update
-;;   :ensure auto-package-update
-;;   :init
-;;   (progn
-;;     (setq apu--last-update-day-path (expand-file-name apu--last-update-day-filename dotemacs-cache-directory))
-;;     ;; (setq apu--last-update-day-path (expand-file-name ".cache/.last-package-update-day" user-emacs-directory))
-;;     (auto-package-update-maybe)))
-
-;; Don't automatically add newline to end of file
-;; (setq mode-require-final-newline nil)
-
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Don't automatically add newline to end of file
@@ -473,24 +451,12 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
         (define-key evil-normal-state-map (kbd "C-<right>") 'evil-numbers/inc-at-pt)
         (define-key evil-normal-state-map (kbd "C-<left>") 'evil-numbers/dec-at-pt)))
 
-;;     (use-package evil-org
-;;       :ensure evil-org)
-
     (use-package powerline-evil
       :ensure powerline-evil
       :config
       (progn
         (powerline-evil-vim-theme)))
 
-;;     (use-package key-chord
-;;       :ensure key-chord
-;;       :diminish key-chord-mode
-;;       :config
-;;       (progn
-;;         (key-chord-mode 1)
-;;         ;; from http://bbbscarter.wordpress.com/category/coding/emacs/
-;;         (setq key-chord-two-keys-delay 0.2)
-;;         (key-chord-define evil-insert-state-map "kj" 'evil-normal-state)))
 ))
 
 (recentf-open-files)
