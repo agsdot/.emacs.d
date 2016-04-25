@@ -142,6 +142,9 @@ Lets make emacs look and behave better.
       '((space-mark 32 [183] [46])
         (tab-mark 9 [9655 9] [92 9])))))
 
+(use-package ethan-wspace
+  :ensure ethan-wspace)
+
 (use-package zenburn-theme
   :ensure zenburn-theme)
 
