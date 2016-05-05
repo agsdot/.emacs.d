@@ -29,6 +29,10 @@ Here lets put in some good defaults for emacs, including setting some system wid
   auto-save-list-file-prefix
   (concat dotemacs-cache-directory "auto-save-list/saves-"))
 
+;; https://github.com/redguardtoo/elpa-mirror
+;; For if/when melpa goes down, prepare for a backup
+;; Use `M-x elpamr-create-mirror-for-installed` to create a local repository.
+;; Go to the github page for more instructions and configuration options
 (use-package elpa-mirror
   :ensure elpa-mirror)
 
