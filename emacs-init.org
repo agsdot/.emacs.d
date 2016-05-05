@@ -29,6 +29,9 @@ Here lets put in some good defaults for emacs, including setting some system wid
   auto-save-list-file-prefix
   (concat dotemacs-cache-directory "auto-save-list/saves-"))
 
+(use-package elpa-mirror
+  :ensure elpa-mirror)
+
 (use-package f
   :ensure f
   :config
@@ -106,6 +109,12 @@ Lets make emacs look and behave better.
   (progn
     (require 'smartparens-config)
     (smartparens-global-mode 1)))
+
+(use-package evil-search-highlight-persist
+  :ensure t
+  :config
+  (progn
+    (global-evil-search-highlight-persist t)))
 
 (line-number-mode t)
 (column-number-mode t)
@@ -444,6 +453,12 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
        (progn
          (global-evil-tabs-mode t)))
 
+     (use-package evil-quickscope
+       :ensure evil-quickscope
+       :config
+       (progn
+         (global-evil-quickscope-mode 1)))
+
     (use-package evil-numbers
       :ensure evil-numbers
       :config
@@ -451,11 +466,18 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
         (define-key evil-normal-state-map (kbd "C-<right>") 'evil-numbers/inc-at-pt)
         (define-key evil-normal-state-map (kbd "C-<left>") 'evil-numbers/dec-at-pt)))
 
-    (use-package powerline-evil
-      :ensure powerline-evil
+    ;;(use-package powerline-evil
+    ;;  :ensure powerline-evil
+    ;;  :config
+    ;;  (progn
+    ;;    (powerline-evil-vim-theme)))
+
+    (use-package spaceline
+      :ensure spaceline
       :config
       (progn
-        (powerline-evil-vim-theme)))
+        (require 'spaceline-config)
+        (spaceline-spacemacs-theme)))
 
 ))
 
