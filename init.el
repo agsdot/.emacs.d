@@ -1,6 +1,9 @@
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")
+                         ;; uncomment the below line if an elpa is down (e.g. melpa.org)
+                         ;; it will install elpa packages from the local backup
+                         ;;("backup-elpa" . "~/.emacs.d/.backup-elpa/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
 (eval-when-compile (package-initialize))
 
