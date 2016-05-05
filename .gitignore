@@ -1,4 +1,5 @@
 # Emacs related files
 elpa/
 .cache/
+.backup-elpa/
 emacs-init.el

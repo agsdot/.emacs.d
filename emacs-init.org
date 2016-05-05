@@ -19,6 +19,8 @@ Here lets put in some good defaults for emacs, including setting some system wid
 
 (defcustom dotemacs-cache-directory (concat user-emacs-directory ".cache/")
   "The storage location for various persistent files.")
+(defcustom dotemacs-backup-elpa-directory (concat user-emacs-directory ".backup-elpa/")
+  "The storage location for elpa mirror files (e.g. *.el and *.tar files).")
 
 ;; Backup Files location
 ;; https://github.com/bling/dotemacs/blob/master/config/init-core.el
@@ -34,14 +36,20 @@ Here lets put in some good defaults for emacs, including setting some system wid
 ;; Use `M-x elpamr-create-mirror-for-installed` to create a local repository.
 ;; Go to the github page for more instructions and configuration options
 (use-package elpa-mirror
-  :ensure elpa-mirror)
+  :ensure elpa-mirror
+  :config
+  (progn
+    (setq elpamr-default-output-directory dotemacs-backup-elpa-directory)))
 
 (use-package f
   :ensure f
   :config
   (progn
     (unless (f-exists? dotemacs-cache-directory)
-      (f-mkdir dotemacs-cache-directory))))
+      (f-mkdir dotemacs-cache-directory))
+    (unless (f-exists? dotemacs-backup-elpa-directory)
+      (f-mkdir dotemacs-backup-elpa-directory)
+      (elpamr-create-mirror-for-installed))))
 
 ;; Dont display logo at startup
 (setq inhibit-startup-message t)
