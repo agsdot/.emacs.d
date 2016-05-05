@@ -135,6 +135,27 @@ Lets make emacs look and behave better.
 (use-package zenburn-theme
   :ensure zenburn-theme)
 
+;; (use-package color-theme-sanityinc-tomorrow
+;;  :ensure color-theme-sanityinc-tomorrow)
+
+;; (use-package apropospriate-theme
+;;   :ensure apropospriate-theme)
+
+;; (use-package apropospriate-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'apropospriate-dark t))
+
+;; (use-package color-theme-sanityinc-tomorrow
+;;   :ensure t
+;;   :config
+;;   (load-theme 'sanityinc-tomorrow-eighties t))
+
+;;(use-package base16-theme
+;;  :ensure base16-theme
+;;  :config
+;;  (load-theme 'base16-tomorrow-dark t))
+
 #+END_SRC
 
 ** init-navigation
