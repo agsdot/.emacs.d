@@ -7,9 +7,29 @@
 Lets make this organized and documented org-mode style
 
 ** init-basics
-Here lets put in some good defaults for emacs, including setting some system wide variables.
+Here lets do the preliminary setup and put in some good defaults for emacs, including setting some system wide variables.
 
 #+BEGIN_SRC emacs-lisp
+
+(require 'package)
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                         ;; ("org" . "http://orgmode.org/elpa/")
+                         ;; uncomment the below line if an elpa is down (e.g. melpa.org)
+                         ;; it will install elpa packages from the local backup
+                         ("backup-elpa" . "~/.emacs.d/.backup-elpa/")
+                         ("gnu" . "http://elpa.gnu.org/packages/")))
+(eval-when-compile (package-initialize))
+
+(if (not (package-installed-p 'use-package))
+  (progn
+    (package-refresh-contents)
+    (package-install 'use-package)))
+
+(require 'use-package)
+
+;; (use-package org
+;;   :ensure org)
+
 (let ((default-directory "~/.emacs.d/custom/"))
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path))
