@@ -58,3 +58,10 @@ Helpful websites:
 
   - https://github.com/dakrone/dakrone-dotfiles/blob/master/.emacs.d/settings.org
     - another good org mode example with use-package
+
+  - http://bnbeckwith.com/bnb-emacs/
+    - https://github.com/bnbeckwith/bnb-emacs
+    - uses use-package and also a really interesting way of formatting and displaying the emacs.d
+      - this? https://github.com/fniessen/org-html-themes
+
+  - https://labo.olivierdelort.net/bricewge/dotfiles-emacs
