@@ -56,6 +56,26 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
     (unless (f-exists? dotemacs-cache-directory)
       (f-mkdir dotemacs-cache-directory))))
 
+;; https://github.com/kiwanami/emacs-deferred
+(use-package deferred
+  :ensure t)
+
+;; SPU - Emacs Silent Package Upgrader
+(use-package spu
+  :ensure t)
+
+;; https://github.com/redguardtoo/elpa-mirror
+;; For if/when melpa goes down, prepare for a backup
+;; Use `M-x elpamr-create-mirror-for-installed` to create a local repository.
+(use-package elpa-mirror
+  :ensure elpa-mirror
+  :config
+  (progn
+    (setq dotemacs-backup-elpa-directory (concat user-emacs-directory ".backup-elpa/"))
+    (setq elpamr-default-output-directory dotemacs-backup-elpa-directory)
+    (unless (f-exists? dotemacs-backup-elpa-directory)
+      (f-mkdir dotemacs-backup-elpa-directory))))
+
 ;; Dont display logo at startup
 (setq inhibit-startup-message t)
 
@@ -522,27 +542,24 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
 #+END_SRC
 
 ** init-last-minute-touches
-Here are some last minute touches. Run elpa-mirror towards the end of this init file, because by then use-package will have installed all packages of interest into the ~/.emacs.d/elpa directory. After all packages are there, then is the proper time to backup them.
+Here are some last minute touches. Run silent package upgrader and elpa-mirror towards the end of this init file, because by then use-package will have installed all packages of interest into the ~/.emacs.d/elpa directory. After all packages are there, then is the proper time to backup them.
 
 Also display the recent files.
 
 #+BEGIN_SRC emacs-lisp
-;; https://github.com/redguardtoo/elpa-mirror
-;; For if/when melpa goes down, prepare for a backup
-;; Use `M-x elpamr-create-mirror-for-installed` to create a local repository.
-(use-package elpa-mirror
-  :ensure elpa-mirror
-  :config
-  (progn
-    (setq dotemacs-backup-elpa-directory (concat user-emacs-directory ".backup-elpa/"))
-    (setq elpamr-default-output-directory dotemacs-backup-elpa-directory)
-    (unless (f-exists? dotemacs-backup-elpa-directory)
-      (f-mkdir dotemacs-backup-elpa-directory)
-      (elpamr-create-mirror-for-installed))
-    ;; Run an emacs command at a certain time
-    ;; https://github.com/rranelli/auto-package-update.el/blob/98e3ecd5731c8b9e63f3ccc9b4fde63f6bbbf7cf/auto-package-update.el#L258
-    ;; https://emacs.stackexchange.com/questions/6029/is-it-possible-to-execute-a-function-or-command-at-a-specific-time
-    (run-at-time "15:00" 86400 'elpamr-create-mirror-for-installed)))
+
+;; https://github.com/kiwanami/emacs-deferred
+(deferred:$
+  (deferred:wait 10000) ;; 10 sec
+  (deferred:nextc it
+    (lambda ()
+      (message "Emacs Silent Package Upgrader [SPU] running..." )
+      (spu-package-upgrade)))
+  (deferred:wait 30000) ;; 30 sec
+  (deferred:nextc it
+    (lambda ()
+      (elpamr-create-mirror-for-installed)
+      (message "Elpa packages backed up to ~/.emacs.d/.backup-elpa/" ))))
 
 (recentf-open-files)
 

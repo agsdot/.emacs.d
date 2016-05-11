@@ -65,3 +65,5 @@ Helpful websites:
       - this? https://github.com/fniessen/org-html-themes
 
   - https://labo.olivierdelort.net/bricewge/dotfiles-emacs
+
+  - https://github.com/thomasf/dotfiles-thomasf-emacs
