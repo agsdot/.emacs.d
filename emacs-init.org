@@ -104,6 +104,15 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (setq visible-bell 1)
 (menu-bar-mode -1)
 
+;; recentf hook for when a file is not opened, but just a scratch buffer, then load recentf
+(defun recentf-open-files-hook ()
+  ;;(if (not (f-this-file))
+  ;;  (recentf-open-files))
+  (if (eq (buffer-file-name) nil)
+    (recentf-open-files)))
+
+(add-hook 'emacs-startup-hook 'recentf-open-files-hook)
+
 ;; From http://www.emacswiki.org/RecentFiles
 (defun recentf-ido-find-file ()
   "Find a recent file using Ido."
@@ -480,8 +489,6 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
 ** init-last-minute-touches
 Here are some last minute touches. Run silent package upgrader and elpa-mirror towards the end of this init file, because by then use-package will have installed all packages of interest into the ~/.emacs.d/elpa directory. After all packages are there, then is the proper time to backup them.
 
-Also display the recent files.
-
 #+BEGIN_SRC emacs-lisp
 
 ;; https://github.com/kiwanami/emacs-deferred
@@ -496,7 +503,5 @@ Also display the recent files.
     (lambda ()
       (elpamr-create-mirror-for-installed)
       (message "Elpa packages backed up to ~/.emacs.d/.backup-elpa/" ))))
-
-(recentf-open-files)
 
 #+END_SRC
