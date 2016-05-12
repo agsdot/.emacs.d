@@ -67,3 +67,7 @@ Helpful websites:
   - https://labo.olivierdelort.net/bricewge/dotfiles-emacs
 
   - https://github.com/thomasf/dotfiles-thomasf-emacs
+
+  - https://github.com/waymondo/hemacs/
+
+  - https://github.com/jcf/emacs.d

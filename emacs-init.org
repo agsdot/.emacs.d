@@ -93,7 +93,10 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (if (not (f-exists? recentf-save-file))
   (progn
     (f-touch recentf-save-file)
-    (f-write "(setq recentf-list '( \"~/.emacs.d/README.md\")) (setq recentf-filter-changer-current 'nil)" 'utf-8 recentf-save-file)))
+    (use-package s) ;; this should already be installed -- f.el has this as a dependency
+    (setq spacer-readme (s-concat (f-full user-emacs-directory) "README.md" )) ;; => /home/path/to/file
+    (setq spacer-recentf (s-concat "(setq recentf-list '(\"" spacer-readme "\")) (setq recentf-filter-changer-current 'nil)"))
+    (f-write spacer-recentf 'utf-8 recentf-save-file)))
 (setq recentf-max-menu-items 10)
 (setq recentf-auto-cleanup 'never)
 (recentf-mode 1)
@@ -393,6 +396,7 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
         (evil-leader/set-key
           "a" 'ace-jump-mode
           "b" 'ido-display-buffer
+          "e" 'eval-region
           "f" 'my-search-util
           "l" 'linum-relative-toggle
           "k"  'kill-other-buffers
