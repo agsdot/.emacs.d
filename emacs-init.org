@@ -16,7 +16,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
                          ;; ("org" . "http://orgmode.org/elpa/")
                          ;; uncomment the below line if an elpa is down (e.g. melpa.org)
                          ;; it will install elpa packages from the local backup
-                         ("backup-elpa" . "~/.emacs.d/.backup-elpa/")
+                         ;; ("backup-elpa" . "~/.emacs.d/.backup-elpa/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
 (eval-when-compile (package-initialize))
 
@@ -26,16 +26,14 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
     (package-install 'use-package)))
 
 (require 'use-package)
-
-;; (use-package org
-;;   :ensure org)
+(setq use-package-always-ensure t)
 
 (let ((default-directory "~/.emacs.d/custom/"))
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path))
 
-(use-package esup
-  :ensure esup)
+(require 'dired-x)
+(require 'cross-platform-copy-paste)
 
 (defcustom dotemacs-cache-directory (concat user-emacs-directory ".cache/")
   "The storage location for various persistent files.")
@@ -49,32 +47,35 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
       auto-save-list-file-prefix
       (concat dotemacs-cache-directory "auto-save-list/saves-"))
 
+(use-package esup)
+
 (use-package f
-  :ensure f
   :config
   (progn
     (unless (f-exists? dotemacs-cache-directory)
       (f-mkdir dotemacs-cache-directory))))
 
 ;; https://github.com/kiwanami/emacs-deferred
-(use-package deferred
-  :ensure t)
+(use-package deferred)
 
 ;; SPU - Emacs Silent Package Upgrader
-(use-package spu
-  :ensure t)
+(use-package spu)
 
 ;; https://github.com/redguardtoo/elpa-mirror
 ;; For if/when melpa goes down, prepare for a backup
 ;; Use `M-x elpamr-create-mirror-for-installed` to create a local repository.
 (use-package elpa-mirror
-  :ensure elpa-mirror
   :config
   (progn
     (setq dotemacs-backup-elpa-directory (concat user-emacs-directory ".backup-elpa/"))
     (setq elpamr-default-output-directory dotemacs-backup-elpa-directory)
     (unless (f-exists? dotemacs-backup-elpa-directory)
       (f-mkdir dotemacs-backup-elpa-directory))))
+
+(use-package undo-tree
+  :config
+  (progn
+    (global-undo-tree-mode t)))
 
 ;; Dont display logo at startup
 (setq inhibit-startup-message t)
@@ -83,29 +84,10 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 ;; http://stackoverflow.com/a/1498292/2741455
 (setq initial-scratch-message ";; This is the Emacs Scratch Buffer")
 
-;; Closing all other buffers in Emacs
-;; http://stackoverflow.com/a/3417473/2741455
-(defun kill-other-buffers ()
-  "Kill all other buffers."
-  (interactive)
-  (mapc 'kill-buffer
-    (delq (current-buffer)
-      (remove-if-not 'buffer-file-name (buffer-list)))))
-
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Don't automatically add newline to end of file
 (setq mode-require-final-newline nil)
-
-(use-package dired-x)
-
-(use-package undo-tree
-  :ensure undo-tree
-  :config
-  (progn
-    (global-undo-tree-mode t)))
-
-(use-package cross-platform-copy-paste)
 
 (setq recentf-save-file (concat dotemacs-cache-directory "recentf"))
 (if (not (f-exists? recentf-save-file))
@@ -116,6 +98,12 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (setq recentf-auto-cleanup 'never)
 (recentf-mode 1)
 
+(setq-default tab-width 2)
+(setq-default indent-tabs-mode nil) ;; seems to affect autocomplete modes
+
+(setq visible-bell 1)
+(menu-bar-mode -1)
+
 ;; From http://www.emacswiki.org/RecentFiles
 (defun recentf-ido-find-file ()
   "Find a recent file using Ido."
@@ -124,15 +112,14 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
     (when file
       (find-file file))))
 
-(setq-default tab-width 2)
-(setq-default indent-tabs-mode nil) ;; seems to affect autocomplete modes
-
-(setq visible-bell 1)
-
-(use-package menu-bar
-  :config
-  (progn
-    (menu-bar-mode -1)))
+;; Closing all other buffers in Emacs
+;; http://stackoverflow.com/a/3417473/2741455
+(defun kill-other-buffers ()
+  "Kill all other buffers."
+  (interactive)
+  (mapc 'kill-buffer
+    (delq (current-buffer)
+      (remove-if-not 'buffer-file-name (buffer-list)))))
 
 #+END_SRC
 
@@ -140,25 +127,22 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 Lets make emacs look and behave better.
 
 #+BEGIN_SRC emacs-lisp
+(line-number-mode t)
+(column-number-mode t)
+(global-linum-mode t)
+
 (use-package smartparens
-  :ensure t
   :config
   (progn
     (require 'smartparens-config)
     (smartparens-global-mode 1)))
 
 (use-package evil-search-highlight-persist
-  :ensure t
   :config
   (progn
     (global-evil-search-highlight-persist t)))
 
-(line-number-mode t)
-(column-number-mode t)
-(global-linum-mode t)
-
 (use-package whitespace
-  :ensure whitespace
   :config
   (progn
     (setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
@@ -166,30 +150,23 @@ Lets make emacs look and behave better.
       '((space-mark 32 [183] [46])
         (tab-mark 9 [9655 9] [92 9])))))
 
-(use-package ethan-wspace
-  :ensure ethan-wspace)
+(use-package ethan-wspace)
 
-(use-package zenburn-theme
-  :ensure zenburn-theme)
+(use-package zenburn-theme)
 
-;; (use-package color-theme-sanityinc-tomorrow
-;;  :ensure color-theme-sanityinc-tomorrow)
+;; (use-package color-theme-sanityinc-tomorrow)
 
-;; (use-package apropospriate-theme
-;;   :ensure apropospriate-theme)
+;; (use-package apropospriate-theme)
 
 ;; (use-package apropospriate-theme
-;;   :ensure t
 ;;   :config
 ;;   (load-theme 'apropospriate-dark t))
 
 ;; (use-package color-theme-sanityinc-tomorrow
-;;   :ensure t
 ;;   :config
 ;;   (load-theme 'sanityinc-tomorrow-eighties t))
 
 ;;(use-package base16-theme
-;;  :ensure base16-theme
 ;;  :config
 ;;  (load-theme 'base16-tomorrow-dark t))
 
@@ -200,7 +177,6 @@ Gotta navigate around emacs more efficiently, and this is how.
 
 #+BEGIN_SRC emacs-lisp
 (use-package smex
-  :ensure smex
   :config
   (progn
     (smex-initialize)
@@ -212,7 +188,6 @@ Gotta navigate around emacs more efficiently, and this is how.
 
 ;; https://github.com/krobertson/emacs.d/blob/master/packages.el
 (use-package projectile
-  :ensure projectile
   :config
   (progn
     (projectile-global-mode 1))
@@ -222,14 +197,12 @@ Gotta navigate around emacs more efficiently, and this is how.
     (setq projectile-require-project-root nil)))
 
 (use-package ace-jump-mode
-  :ensure ace-jump-mode
   :config
   (progn
     (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)))
 
 ;; ido mode configs
 (use-package ido-vertical-mode
-  :ensure ido-vertical-mode
   :config
   (progn
     (setq ido-enable-flex-matching t)
@@ -239,7 +212,6 @@ Gotta navigate around emacs more efficiently, and this is how.
 
 ;; https://github.com/bdd/.emacs.d/blob/master/packages.el
 (use-package flx-ido
-  :ensure flx-ido
   :config
   (progn
     (flx-ido-mode 1)
@@ -247,7 +219,6 @@ Gotta navigate around emacs more efficiently, and this is how.
     (setq gc-cons-threshold 20000000)))
 
 (use-package saveplace
-  :ensure saveplace
   :config
   (progn
     (setq-default save-place t)
@@ -268,17 +239,14 @@ Here we're going to make emacs a great coding environment.
 ;; got git-gutter working properly with use-package
 ;; https://github.com/hlissner/emacs.d/blob/master/init/init-git.el
 (use-package git-gutter
-  :ensure git-gutter
   :diminish git-gutter-mode
   :config
   (progn
     (global-git-gutter-mode 1)))
 
-(use-package git-timemachine
-  :ensure git-timemachine)
+(use-package git-timemachine)
 
 (use-package magit
-  :ensure magit
   :config
   (progn
     ;; http://whattheemacsd.com/setup-magit.el-01.html
@@ -296,25 +264,21 @@ Here we're going to make emacs a great coding environment.
       (jump-to-register :magit-fullscreen))))
 
 (use-package web-mode
-  :ensure web-mode
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.gsp?\\'" . web-mode))))
 
 (use-package js2-mode
-  :ensure js2-mode
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.js?\\'" . js2-mode))))
 
 ;; https://github.com/yasuyk/web-beautify
 ;; js-beautify installed by typing: npm -g install js-beautify
-(use-package web-beautify
-  :ensure web-beautify)
+(use-package web-beautify)
 
 (use-package groovy-mode
-  :ensure groovy-mode
   :config
   (progn
     (autoload 'groovy-mode "groovy-mode" "Major mode for editing Groovy code." t)
@@ -323,19 +287,16 @@ Here we're going to make emacs a great coding environment.
     (add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))))
 
 (use-package lua-mode
-  :ensure lua-mode
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.lua?\\'" . js2-mode))))
 
 (use-package vimrc-mode
-  :ensure vimrc-mode
   :config
   (progn
     (add-to-list 'auto-mode-alist '(".vim\\(rc\\)?$" . vimrc-mode))))
 
 (use-package drag-stuff
-  :ensure drag-stuff
   :config
   (progn
     (drag-stuff-global-mode t)))
@@ -343,7 +304,6 @@ Here we're going to make emacs a great coding environment.
 ;; http://stackoverflow.com/a/15310340/2741455
 ;; How to set defcustom variable
 (use-package linum-relative
-  :ensure linum-relative
   :config
   (progn
     (setq linum-relative-format "%3s ")
@@ -351,19 +311,12 @@ Here we're going to make emacs a great coding environment.
 
 (cond ((executable-find "pt")
         (progn
-          (use-package pt
-            :ensure pt) ;; https://github.com/bling/pt.el
+          (use-package pt) ;; https://github.com/bling/pt.el
           (defalias 'my-search-util 'projectile-pt)))  ;; seems pretty fast (faster than ag? maybe...dunno), but it's written in Go!
       ((executable-find "ag")
         (progn
-          (use-package ag
-            :ensure ag) ;; https://github.com/Wilfred/ag.el
+          (use-package ag) ;; https://github.com/Wilfred/ag.el
           (defalias 'my-search-util 'projectile-ag)))  ;; on the website, it said faster than ack
-      ((executable-find "ack")
-        (progn
-          (use-package ack-and-a-half
-            :ensure ack-and-a-half) ;; https://github.com/jhelwig/ack-and-a-half
-          (defalias 'my-search-util 'projectile-ack)))  ;; faster than grep
       ((executable-find "grep")
         (progn
           (defalias 'my-search-util 'projectile-grep))))
@@ -379,7 +332,6 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
 (setq evil-want-C-w-in-emacs-state t)
 (setq evil-default-cursor t)
 (use-package evil
-  :ensure evil
   :config
   (progn
     (evil-mode 1)
@@ -425,7 +377,6 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
       (evil-scroll-line-down 10)))
 
     (use-package evil-leader
-      :ensure evil-leader
       :config
       (progn
         (global-evil-leader-mode t)
@@ -435,6 +386,7 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
           "b" 'ido-display-buffer
           "f" 'my-search-util
           "l" 'linum-relative-toggle
+          "k"  'kill-other-buffers
           "nf" 'neotree-find
           "nt" 'neotree-toggle
           "p" 'projectile-find-file
@@ -444,94 +396,78 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
           "<up>" 'drag-stuff-up)))
 
     (use-package neotree
-      :ensure neotree
       :config
-        (progn
-          ;; from https://github.com/andrewmcveigh/emacs.d
-          ;; get keybindings to work better in neotree with evil
-          (defun neotree-copy-file ()
-            (interactive)
-            (let* ((current-path (neo-buffer--get-filename-current-line))
-                   (msg (format "Copy [%s] to: "
-                                (neo-path--file-short-name current-path)))
-                   (to-path (read-file-name msg (file-name-directory current-path))))
-              (dired-copy-file current-path to-path t))
-            (neo-buffer--refresh t))
-
-          (define-minor-mode neotree-evil
-            "Use NERDTree bindings on neotree."
-            :lighter " NT"
-            :keymap (progn
-                      (evil-make-overriding-map neotree-mode-map 'normal t)
-                      (evil-define-key 'normal neotree-mode-map
-                        "C" 'neotree-change-root
-                        "U" 'neotree-select-up-node
-                        "r" 'neotree-refresh
-                        "o" 'neotree-enter
-                        (kbd "<return>") 'neotree-enter
-                        "i" 'neotree-enter-horizontal-split
-                        "s" 'neotree-enter-vertical-split
-                        "n" 'evil-search-next
-                        "N" 'evil-search-previous
-                        "ma" 'neotree-create-node
-                        "mc" 'neotree-copy-file
-                        "md" 'neotree-delete-node
-                        "mm" 'neotree-rename-node
-                        "gg" 'evil-goto-first-line)
-                      neotree-mode-map))))
+      (progn
+        ;; from https://github.com/andrewmcveigh/emacs.d
+        ;; get keybindings to work better in neotree with evil
+        (defun neotree-copy-file ()
+          (interactive)
+          (let* ((current-path (neo-buffer--get-filename-current-line))
+                 (msg (format "Copy [%s] to: "
+                              (neo-path--file-short-name current-path)))
+                 (to-path (read-file-name msg (file-name-directory current-path))))
+            (dired-copy-file current-path to-path t))
+          (neo-buffer--refresh t))
+        (define-minor-mode neotree-evil
+          "Use NERDTree bindings on neotree."
+          :lighter " NT"
+          :keymap (progn
+                    (evil-make-overriding-map neotree-mode-map 'normal t)
+                    (evil-define-key 'normal neotree-mode-map
+                      "C" 'neotree-change-root
+                      "U" 'neotree-select-up-node
+                      "r" 'neotree-refresh
+                      "o" 'neotree-enter
+                      (kbd "<return>") 'neotree-enter
+                      "i" 'neotree-enter-horizontal-split
+                      "s" 'neotree-enter-vertical-split
+                      "n" 'evil-search-next
+                      "N" 'evil-search-previous
+                      "ma" 'neotree-create-node
+                      "mc" 'neotree-copy-file
+                      "md" 'neotree-delete-node
+                      "mm" 'neotree-rename-node
+                      "gg" 'evil-goto-first-line)
+                    neotree-mode-map))))
 
     (use-package evil-nerd-commenter
-      :ensure evil-nerd-commenter
       :commands (evilnc-comment-or-uncomment-lines)
       :config
       (progn
         (evilnc-default-hotkeys)))
 
     (use-package evil-matchit
-      :ensure evil-matchit
       :config
       (progn
         (global-evil-matchit-mode 1)))
 
     (use-package evil-surround
-      :ensure evil-surround
       :config
       (progn
         (global-evil-surround-mode 1)))
 
     (use-package evil-visualstar
-      :ensure evil-visualstar
       :config
       (progn
         (global-evil-visualstar-mode)))
 
      (use-package evil-tabs
-       :ensure evil-tabs
        :config
        (progn
          (global-evil-tabs-mode t)))
 
      (use-package evil-quickscope
-       :ensure evil-quickscope
        :config
        (progn
          (global-evil-quickscope-mode 1)))
 
     (use-package evil-numbers
-      :ensure evil-numbers
       :config
       (progn
         (define-key evil-normal-state-map (kbd "C-<right>") 'evil-numbers/inc-at-pt)
         (define-key evil-normal-state-map (kbd "C-<left>") 'evil-numbers/dec-at-pt)))
 
-    ;;(use-package powerline-evil
-    ;;  :ensure powerline-evil
-    ;;  :config
-    ;;  (progn
-    ;;    (powerline-evil-vim-theme)))
-
     (use-package spaceline
-      :ensure spaceline
       :config
       (progn
         (require 'spaceline-config)
@@ -550,12 +486,12 @@ Also display the recent files.
 
 ;; https://github.com/kiwanami/emacs-deferred
 (deferred:$
-  (deferred:wait 10000) ;; 10 sec
+  (deferred:wait (* 30 1000)) ;; 30 sec
   (deferred:nextc it
     (lambda ()
-      (message "Emacs Silent Package Upgrader [SPU] running..." )
-      (spu-package-upgrade)))
-  (deferred:wait 30000) ;; 30 sec
+      (spu-package-upgrade)
+      (message "[SPU] Emacs Silent Package Upgrader completed." )))
+  (deferred:wait (* 120 1000)) ;; 120 sec
   (deferred:nextc it
     (lambda ()
       (elpamr-create-mirror-for-installed)
