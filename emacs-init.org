@@ -13,11 +13,12 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                         ("gnu" . "http://elpa.gnu.org/packages/")
                          ;; ("org" . "http://orgmode.org/elpa/")
                          ;; uncomment the below line if an elpa is down (e.g. melpa.org)
-                         ;; it will install elpa packages from the local backup
+                         ;; it will install elpa packages from the "backup-elpa", the local backup
                          ;; ("backup-elpa" . "~/.emacs.d/.backup-elpa/")
-                         ("gnu" . "http://elpa.gnu.org/packages/")))
+))
 (eval-when-compile (package-initialize))
 
 (if (not (package-installed-p 'use-package))
@@ -164,23 +165,23 @@ Lets make emacs look and behave better.
 
 (use-package ethan-wspace)
 
+;; not quite sure how to set this theme up
+
+;;(use-package apropospriate-theme
+;;:defer t
+;;:init (load-theme 'apropospriate-dark t)) ;; issues with this one, but nice for html-mode
+
+;;(use-package apropospriate-theme)
+;;(load-theme 'apropospriate-dark t) ;; issues with this one, but nice for html-mode
+
 (use-package zenburn-theme)
 
-;; (use-package color-theme-sanityinc-tomorrow)
+(use-package spacemacs-theme
+  :defer t
+  :init
+  (progn
+    (load-theme 'spacemacs-dark t)))
 
-;; (use-package apropospriate-theme)
-
-;; (use-package apropospriate-theme
-;;   :config
-;;   (load-theme 'apropospriate-dark t))
-
-;; (use-package color-theme-sanityinc-tomorrow
-;;   :config
-;;   (load-theme 'sanityinc-tomorrow-eighties t))
-
-;;(use-package base16-theme
-;;  :config
-;;  (load-theme 'base16-tomorrow-dark t))
 
 #+END_SRC
 
@@ -285,6 +286,18 @@ Here we're going to make emacs a great coding environment.
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.js?\\'" . js2-mode))))
+
+;; https://github.com/jcf/emacs.d/blob/master/init-languages.org
+(use-package css-mode
+  :commands css-mode
+  :init
+  (setq css-indent-offset 2)
+  :config
+  (use-package rainbow-mode
+    :pin gnu ;; uses gnu and not melpa for its repo
+    :init
+    (dolist (hook '(css-mode-hook html-mode-hook))
+      (add-hook hook 'rainbow-mode))))
 
 ;; https://github.com/yasuyk/web-beautify
 ;; js-beautify installed by typing: npm -g install js-beautify
