@@ -165,23 +165,69 @@ Lets make emacs look and behave better.
 
 (use-package ethan-wspace)
 
-;; not quite sure how to set this theme up
-
 ;;(use-package apropospriate-theme
-;;:defer t
-;;:init (load-theme 'apropospriate-dark t)) ;; issues with this one, but nice for html-mode
+;;  :defer t
+;;  :config (load-theme 'apropospriate-dark t)) ;; issues with this one, but nice for html-mode
 
-;;(use-package apropospriate-theme)
+;; not quite sure how to set this theme up
+(setq max-lisp-eval-depth 10000)
+
+(use-package apropospriate-theme)
 ;;(load-theme 'apropospriate-dark t) ;; issues with this one, but nice for html-mode
 
-(use-package zenburn-theme)
+;;(use-package zenburn-theme)
+(use-package zenburn-theme
+  :defer t
+  :config
+  (progn (load-theme 'zenburn t)))
 
+;; (use-package monokai-theme)
+(use-package monokai-theme
+  :defer t
+  :config
+  (progn (load-theme 'monokai t)))
+
+;; (use-package material-theme)
+(use-package material-theme
+  :defer t
+  :config
+  (progn (load-theme 'material t)))
+
+;;(use-package spacemacs-theme)
 (use-package spacemacs-theme
   :defer t
-  :init
+  :config
   (progn
     (load-theme 'spacemacs-dark t)))
 
+(use-package moe-theme
+  :defer t
+  :config
+  (load-theme 'moe-dark t))
+
+;;(use-package solarized-theme)
+(use-package solarized-theme
+  :defer t
+  :config
+  (progn (load-theme 'solarized-dark t)))
+
+(use-package theme-changer
+  :init
+  (setq calendar-location-name "New York, NY"
+           calendar-latitude 41.8
+           calendar-longitude -73.59)
+  :config
+  (change-theme 'solarized-dark 'apropospriate-dark))
+
+(use-package display-theme
+  :config
+  (global-display-theme-mode))
+
+(use-package select-themes)
+
+(use-package hl-line
+  :ensure t
+  :init (global-hl-line-mode))
 
 #+END_SRC
 
@@ -417,6 +463,7 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
           "nt" 'neotree-toggle
           "p" 'projectile-find-file
           "r" 'recentf-ido-find-file
+          "t" 'select-themes
           "/" 'evilnc-comment-or-uncomment-lines
           "<down>" 'drag-stuff-down
           "<up>" 'drag-stuff-up)))
