@@ -60,7 +60,10 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (use-package deferred)
 
 ;; SPU - Emacs Silent Package Upgrader
-(use-package spu)
+(use-package spu
+  :config
+  (progn
+    (setq spu-log-path (concat dotemacs-cache-directory "spu_log/"))))
 
 ;; https://github.com/redguardtoo/elpa-mirror
 ;; For if/when melpa goes down, prepare for a backup
@@ -165,22 +168,17 @@ Lets make emacs look and behave better.
 
 (use-package ethan-wspace)
 
-;; not quite sure how to set this theme up
+(use-package apropospriate-theme
+:defer t
+:init (load-theme 'apropospriate-dark t)) ;; issues with this one, but nice for html-mode
 
-;;(use-package apropospriate-theme
-;;:defer t
-;;:init (load-theme 'apropospriate-dark t)) ;; issues with this one, but nice for html-mode
-
-;;(use-package apropospriate-theme)
-;;(load-theme 'apropospriate-dark t) ;; issues with this one, but nice for html-mode
-
-(use-package zenburn-theme)
-
-(use-package spacemacs-theme
-  :defer t
-  :init
-  (progn
-    (load-theme 'spacemacs-dark t)))
+;;(use-package zenburn-theme)
+;;
+;;(use-package spacemacs-theme
+;;  :defer t
+;;  :init
+;;  (progn
+;;    (load-theme 'spacemacs-dark t)))
 
 
 #+END_SRC

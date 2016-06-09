@@ -71,3 +71,10 @@ Helpful websites:
   - https://github.com/waymondo/hemacs/
 
   - https://github.com/jcf/emacs.d
+
+  - https://sriramkswamy.github.io/dotemacs/#orgheadline11
+    - https://github.com/sriramkswamy/dotemacs
+    - https://www.reddit.com/r/vim/comments/4ms4z0/org_mode_which_plugin_to_use_vimorganizer_or/
+
+  - https://github.com/hlissner/.emacs.d
+    - https://www.reddit.com/r/emacs/comments/4n0n8o/what_is_the_best_emacs_mode_line_package/
