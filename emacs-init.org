@@ -14,6 +14,8 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")
+                         ;; ("popkit" . "https://elpa.popkit.org/packages/") ;; in case melpa goes down, have this backup mirror
+
                          ;; ("org" . "http://orgmode.org/elpa/")
                          ;; uncomment the below line if an elpa is down (e.g. melpa.org)
                          ;; it will install elpa packages from the "backup-elpa", the local backup
@@ -152,11 +154,6 @@ Lets make emacs look and behave better.
   (progn
     (require 'smartparens-config)
     (smartparens-global-mode 1)))
-
-(use-package evil-search-highlight-persist
-  :config
-  (progn
-    (global-evil-search-highlight-persist t)))
 
 (use-package whitespace
   :config
@@ -350,6 +347,7 @@ Here we're going to make emacs a great coding environment.
 Lets add the awesome vim/modal editing keybindings. So much more fluid to edit with than emacs own.
 
 #+BEGIN_SRC emacs-lisp
+(use-package goto-chg)
 ;; evil mode setup ;;;
 (setq evil-want-C-u-scroll t)
 (setq evil-want-C-w-in-emacs-state t)
@@ -398,6 +396,12 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
       (interactive)
       (next-line 10)
       (evil-scroll-line-down 10)))
+
+    (use-package key-chord
+      :config
+      (progn
+        (key-chord-mode 1)
+	(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)))
 
     (use-package evil-leader
       :config
@@ -507,16 +511,19 @@ Here are some last minute touches. Run silent package upgrader and elpa-mirror t
 #+BEGIN_SRC emacs-lisp
 
 ;; https://github.com/kiwanami/emacs-deferred
-(deferred:$
-  (deferred:wait (* 30 1000)) ;; 30 sec
-  (deferred:nextc it
-    (lambda ()
-      (spu-package-upgrade)
-      (message "[SPU] Emacs Silent Package Upgrader completed." )))
-  (deferred:wait (* 120 1000)) ;; 120 sec
-  (deferred:nextc it
-    (lambda ()
-      (elpamr-create-mirror-for-installed)
-      (message "Elpa packages backed up to ~/.emacs.d/.backup-elpa/" ))))
+;; (deferred:$
+;;   (deferred:wait (* 30 1000)) ;; 30 sec
+;;   (deferred:nextc it
+;;     (lambda ()
+;;       (spu-package-upgrade)
+;;       (message "[SPU] Emacs Silent Package Upgrader completed." )))
+;;   (deferred:wait (* 120 1000)) ;; 120 sec
+;;   (deferred:nextc it
+;;     (lambda ()
+;;       (elpamr-create-mirror-for-installed)
+;;       (message "Elpa packages backed up to ~/.emacs.d/.backup-elpa/" ))))
+
+(setq tramp-default-method "ssh")
+
 
 #+END_SRC
