@@ -3,3 +3,4 @@ elpa/
 .cache/
 .backup-elpa/
 emacs-init.el
+custom/custom.el

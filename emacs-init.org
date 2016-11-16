@@ -38,6 +38,9 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (require 'dired-x)
 (require 'cross-platform-copy-paste)
 
+;; http://stackoverflow.com/questions/1480572/how-to-have-emacs-auto-refresh-all-buffers-when-files-have-changed-on-disk
+(global-auto-revert-mode t)
+
 (defcustom dotemacs-cache-directory (concat user-emacs-directory ".cache/")
   "The storage location for various persistent files.")
 
@@ -50,13 +53,18 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
       auto-save-list-file-prefix
       (concat dotemacs-cache-directory "auto-save-list/saves-"))
 
+(setq custom-file (concat user-emacs-directory "custom/custom.el"))
+
 (use-package esup)
 
 (use-package f
   :config
   (progn
     (unless (f-exists? dotemacs-cache-directory)
-      (f-mkdir dotemacs-cache-directory))))
+      (f-mkdir dotemacs-cache-directory))
+    ;;(unless (f-exists? custom-file)
+    ;;  (f-touch custom-file))
+    ))
 
 ;; https://github.com/kiwanami/emacs-deferred
 (use-package deferred)
@@ -138,6 +146,13 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
   (mapc 'kill-buffer
     (delq (current-buffer)
       (remove-if-not 'buffer-file-name (buffer-list)))))
+
+;; http://stackoverflow.com/questions/5052088/what-is-custom-set-variables-and-faces-in-my-emacs
+;; http://emacsblog.org/2008/12/06/quick-tip-detaching-the-custom-file/
+;;(setq custom-file "~/.emacs.d/custom/custom.el")
+(load custom-file 'noerror)
+
+(setq tramp-default-method "ssh")
 
 #+END_SRC
 
@@ -426,6 +441,33 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
     (use-package neotree
       :config
       (progn
+        (setq-default neo-show-hidden-files t)
+
+        ;; from https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-neotree.el
+        (setq neo-theme 'nerd) ; 'classic, 'nerd, 'ascii, 'arrow
+        (setq neo-vc-integration '(face char))
+        ;; Patch to fix vc integration
+        (defun neo-vc-for-node (node)
+          (let* ((backend (vc-backend node))
+                 (vc-state (when backend (vc-state node backend))))
+            ;; (message "%s %s %s" node backend vc-state)
+            (cons (cdr (assoc vc-state neo-vc-state-char-alist))
+                  (cl-case vc-state
+                    (up-to-date       neo-vc-up-to-date-face)
+                    (edited           neo-vc-edited-face)
+                    (needs-update     neo-vc-needs-update-face)
+                    (needs-merge      neo-vc-needs-merge-face)
+                    (unlocked-changes neo-vc-unlocked-changes-face)
+                    (added            neo-vc-added-face)
+                    (removed          neo-vc-removed-face)
+                    (conflict         neo-vc-conflict-face)
+                    (missing          neo-vc-missing-face)
+                    (ignored          neo-vc-ignored-face)
+                    (unregistered     neo-vc-unregistered-face)
+                    (user             neo-vc-user-face)
+                    (t                neo-vc-default-face)))))
+        ;; from https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-neotree.el
+
         ;; from https://github.com/andrewmcveigh/emacs.d
         ;; get keybindings to work better in neotree with evil
         (defun neotree-copy-file ()
@@ -479,10 +521,10 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
       (progn
         (global-evil-visualstar-mode)))
 
-     (use-package evil-tabs
-       :config
-       (progn
-         (global-evil-tabs-mode t)))
+     ;; (use-package evil-tabs
+     ;;   :config
+     ;;   (progn
+     ;;     (global-evil-tabs-mode t)))
 
      (use-package evil-quickscope
        :config
@@ -522,8 +564,5 @@ Here are some last minute touches. Run silent package upgrader and elpa-mirror t
 ;;     (lambda ()
 ;;       (elpamr-create-mirror-for-installed)
 ;;       (message "Elpa packages backed up to ~/.emacs.d/.backup-elpa/" ))))
-
-(setq tramp-default-method "ssh")
-
 
 #+END_SRC
