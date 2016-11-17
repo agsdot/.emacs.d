@@ -122,13 +122,13 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (menu-bar-mode -1)
 
 ;; recentf hook for when a file is not opened, but just a scratch buffer, then load recentf
-(defun recentf-open-files-hook ()
-  ;;(if (not (f-this-file))
-  ;;  (recentf-open-files))
-  (if (eq (buffer-file-name) nil)
-    (recentf-open-files)))
+;; (defun recentf-open-files-hook ()
+;;   ;;(if (not (f-this-file))
+;;   ;;  (recentf-open-files))
+;;   (if (eq (buffer-file-name) nil)
+;;     (recentf-open-files)))
 
-(add-hook 'emacs-startup-hook 'recentf-open-files-hook)
+;; (add-hook 'emacs-startup-hook 'recentf-open-files-hook)
 
 ;; From http://www.emacswiki.org/RecentFiles
 (defun recentf-ido-find-file ()
@@ -180,9 +180,14 @@ Lets make emacs look and behave better.
 
 (use-package ethan-wspace)
 
-(use-package apropospriate-theme
-:defer t
-:init (load-theme 'apropospriate-dark t)) ;; issues with this one, but nice for html-mode
+(use-package color-theme-sanityinc-tomorrow
+  ;; :functions color-theme-install
+  ;; https://github.com/basille/.emacs.d/blob/master/init.el
+  :init (load-theme 'sanityinc-tomorrow-eighties t))
+
+;; (use-package apropospriate-theme
+;; :defer t
+;; :init (load-theme 'apropospriate-dark t)) ;; issues with this one, but nice for html-mode
 
 ;;(use-package zenburn-theme)
 ;;
@@ -218,6 +223,15 @@ Gotta navigate around emacs more efficiently, and this is how.
   (progn
     (setq projectile-known-projects-file (concat dotemacs-cache-directory "projectile-bookmarks.eld"))
     (setq projectile-require-project-root nil)))
+
+(use-package page-break-lines)
+(use-package dashboard
+  :ensure nil ;; git clone manually in ~/.emacs.d/custom/emacs-dashboard
+  :config
+  (progn
+    (dashboard-setup-startup-hook)
+    (setq dashboard-items '((recents  . 15)
+                            (projects . 5)))))
 
 (use-package ace-jump-mode
   :config
