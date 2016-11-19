@@ -78,3 +78,13 @@ Helpful websites:
 
   - https://github.com/hlissner/.emacs.d
     - https://www.reddit.com/r/emacs/comments/4n0n8o/what_is_the_best_emacs_mode_line_package/
+
+More notes on setting up Ivy/Swiper/Counsel (a replacament for Ido and Helm)
+
+  - https://cestlaz.github.io/posts/using-emacs-6-swiper/
+  - http://oremacs.com/2015/04/16/ivy-mode/
+  - http://oremacs.com/2016/01/06/ivy-flx/
+    - https://www.reddit.com/r/emacs/comments/3xzas3/help_with_ivycounsel_fuzzy_matching_and_sorting/
+  - http://emacsist.com/10865
+  - https://www.reddit.com/r/emacs/comments/51lqn9/helm_or_ivy/
+  - https://sam217pa.github.io/2016/09/13/from-helm-to-ivy/
