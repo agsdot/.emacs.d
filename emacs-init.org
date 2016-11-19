@@ -130,14 +130,6 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 
 ;; (add-hook 'emacs-startup-hook 'recentf-open-files-hook)
 
-;; From http://www.emacswiki.org/RecentFiles
-(defun recentf-ido-find-file ()
-  "Find a recent file using Ido."
-  (interactive)
-  (let ((file (ido-completing-read "Choose recent file: " recentf-list nil t)))
-    (when file
-      (find-file file))))
-
 ;; Closing all other buffers in Emacs
 ;; http://stackoverflow.com/a/3417473/2741455
 (defun kill-other-buffers ()
@@ -204,21 +196,32 @@ Lets make emacs look and behave better.
 Gotta navigate around emacs more efficiently, and this is how.
 
 #+BEGIN_SRC emacs-lisp
-(use-package smex
+
+(use-package counsel)
+(use-package ivy
+  :ensure smex ;; http://emacs.stackexchange.com/questions/17710/use-package-with-config-to-set-variables
   :config
   (progn
-    (smex-initialize)
-    (setq smex-save-file (concat dotemacs-cache-directory "smex-items"))
-    (global-set-key (kbd "M-x") 'smex)
-    (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-    ;; This is your old M-x.
-    (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)))
+    (setq smex-save-file (concat dotemacs-cache-directory "smex-items")) ;; retain smex for the sort by most recent / frequently used commands
+    (ivy-mode 1)
+    (global-set-key (kbd "M-x") 'counsel-M-x) ;; when in Emacs keybindings
+    (setq ivy-height 14) ;; number of result lines to display
+    ;; (setq ivy-initial-inputs-alist nil) ;; no regexp by default
+    (setq ivy-re-builders-alist
+      '((t . ivy--regex-fuzzy)))))
+
+;; https://manuel-uberti.github.io/emacs/2016/09/17/validate/
+(use-package validate)
 
 ;; https://github.com/krobertson/emacs.d/blob/master/packages.el
 (use-package projectile
   :config
   (progn
-    (projectile-global-mode 1))
+    (projectile-global-mode 1)
+    ;;https://github.com/lunaryorn/.emacs.d/blob/master/init.el
+    ;;(validate-setq projectile-completion-system 'ivy
+    ;;  projectile-find-dir-includes-top-level t)
+    (setq projectile-completion-system 'ivy))
   :init
   (progn
     (setq projectile-known-projects-file (concat dotemacs-cache-directory "projectile-bookmarks.eld"))
@@ -236,23 +239,6 @@ Gotta navigate around emacs more efficiently, and this is how.
   :config
   (progn
     (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)))
-
-;; ido mode configs
-(use-package ido-vertical-mode
-  :config
-  (progn
-    (setq ido-enable-flex-matching t)
-    (setq ido-everywhere t)
-    (ido-mode 1)
-    (ido-vertical-mode t)))
-
-;; https://github.com/bdd/.emacs.d/blob/master/packages.el
-(use-package flx-ido
-  :config
-  (progn
-    (flx-ido-mode 1)
-    (setq flx-ido-threshhold 1000)
-    (setq gc-cons-threshold 20000000)))
 
 (use-package saveplace
   :config
@@ -286,7 +272,7 @@ Here we're going to make emacs a great coding environment.
   :config
   (progn
     ;; http://whattheemacsd.com/setup-magit.el-01.html
-    (defalias 'mgst 'magit-status)
+    ;; http://www.lunaryorn.com/posts/fullscreen-magit-status.html
     (defalias 'gst 'magit-status)
     (defalias 'st 'magit-status)
     (defadvice magit-status (around magit-fullscreen activate)
@@ -324,7 +310,8 @@ Here we're going to make emacs a great coding environment.
 
 ;; https://github.com/yasuyk/web-beautify
 ;; js-beautify installed by typing: npm -g install js-beautify
-(use-package web-beautify)
+(when (executable-find "js-beautify")
+  (use-package web-beautify))
 
 (use-package groovy-mode
   :config
@@ -385,10 +372,18 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
   (progn
     (evil-mode 1)
     (define-key evil-normal-state-map ";" 'evil-ex)
-    (define-key evil-normal-state-map ":" 'smex)
+    (define-key evil-normal-state-map ":" 'counsel-M-x)
+
+    ;; for use in counsel-M-x / smex
+    (defalias 'w 'evil-write)
+    (defalias 'wq 'evil-save-and-close)
+    (defalias 'wq! 'evil-save-and-close)
+    (defalias 'q 'evil-quit)
+    (defalias 'q! 'evil-quit)
 
     (evil-set-initial-state 'magit-status-mode 'emacs)
     (evil-set-initial-state 'magit-log-edit-mode 'emacs)
+    (evil-set-initial-state 'dashboard-mode 'emacs)
 
     (define-key evil-normal-state-map (kbd "C-<down>") 'drag-stuff-down)
     (define-key evil-normal-state-map (kbd "C-<up>") 'drag-stuff-up)
@@ -438,7 +433,7 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
         (evil-leader/set-leader ",")
         (evil-leader/set-key
           "a" 'ace-jump-mode
-          "b" 'ido-display-buffer
+          "b" 'ivy-switch-buffer
           "e" 'eval-region
           "f" 'my-search-util
           "l" 'linum-relative-toggle
@@ -446,7 +441,7 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
           "nf" 'neotree-find
           "nt" 'neotree-toggle
           "p" 'projectile-find-file
-          "r" 'recentf-ido-find-file
+          "r" 'counsel-recentf
           "/" 'evilnc-comment-or-uncomment-lines
           "<down>" 'drag-stuff-down
           "<up>" 'drag-stuff-up)))
