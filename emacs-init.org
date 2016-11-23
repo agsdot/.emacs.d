@@ -11,25 +11,42 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 
 #+BEGIN_SRC emacs-lisp
 
-(require 'package)
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("gnu" . "http://elpa.gnu.org/packages/")
-                         ;; ("popkit" . "https://elpa.popkit.org/packages/") ;; in case melpa goes down, have this backup mirror
+;; (require 'package)
+;; (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+;;                          ("gnu" . "http://elpa.gnu.org/packages/")
+;;                          ;; ("popkit" . "https://elpa.popkit.org/packages/") ;; in case melpa goes down, have this backup mirror
+;; 
+;;                          ;; ("org" . "http://orgmode.org/elpa/")
+;;                          ;; uncomment the below line if an elpa is down (e.g. melpa.org)
+;;                          ;; it will install elpa packages from the "backup-elpa", the local backup
+;;                          ;; ("backup-elpa" . "~/.emacs.d/.backup-elpa/")
+;; ))
+;; (eval-when-compile (package-initialize))
+;; 
+;; (if (not (package-installed-p 'use-package))
+;;   (progn
+;;     (package-refresh-contents)
+;;     (package-install 'use-package)))
+;; 
+;; (require 'use-package)
 
-                         ;; ("org" . "http://orgmode.org/elpa/")
-                         ;; uncomment the below line if an elpa is down (e.g. melpa.org)
-                         ;; it will install elpa packages from the "backup-elpa", the local backup
-                         ;; ("backup-elpa" . "~/.emacs.d/.backup-elpa/")
-))
-(eval-when-compile (package-initialize))
+(package-initialize)
+(if (require 'quelpa nil t)
+    (quelpa-self-upgrade)
+  (with-temp-buffer
+    (url-insert-file-contents "https://raw.github.com/quelpa/quelpa/master/bootstrap.el")
+    (eval-buffer)))
 
-(if (not (package-installed-p 'use-package))
-  (progn
-    (package-refresh-contents)
-    (package-install 'use-package)))
+(setq quelpa-stable-p nil)
 
-(require 'use-package)
-(setq use-package-always-ensure t)
+(quelpa
+ '(quelpa-use-package
+   :fetcher github
+   :repo "quelpa/quelpa-use-package"))
+
+(require 'quelpa-use-package)
+
+;;(setq use-package-always-ensure t)
 
 (let ((default-directory "~/.emacs.d/custom/"))
   (normal-top-level-add-to-load-path '("."))
@@ -55,9 +72,9 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 
 (setq custom-file (concat user-emacs-directory "custom/custom.el"))
 
-(use-package esup)
+(use-package esup :quelpa)
 
-(use-package f
+(use-package f :quelpa
   :config
   (progn
     (unless (f-exists? dotemacs-cache-directory)
@@ -67,10 +84,10 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
     ))
 
 ;; https://github.com/kiwanami/emacs-deferred
-(use-package deferred)
+(use-package deferred :quelpa)
 
 ;; SPU - Emacs Silent Package Upgrader
-(use-package spu
+(use-package spu :quelpa
   :config
   (progn
     (setq spu-log-path (concat dotemacs-cache-directory "spu_log/"))))
@@ -78,7 +95,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 ;; https://github.com/redguardtoo/elpa-mirror
 ;; For if/when melpa goes down, prepare for a backup
 ;; Use `M-x elpamr-create-mirror-for-installed` to create a local repository.
-(use-package elpa-mirror
+(use-package elpa-mirror :quelpa
   :config
   (progn
     (setq dotemacs-backup-elpa-directory (concat user-emacs-directory ".backup-elpa/"))
@@ -86,7 +103,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
     (unless (f-exists? dotemacs-backup-elpa-directory)
       (f-mkdir dotemacs-backup-elpa-directory))))
 
-(use-package undo-tree
+(use-package undo-tree :quelpa
   :config
   (progn
     (global-undo-tree-mode t)))
@@ -156,13 +173,13 @@ Lets make emacs look and behave better.
 (column-number-mode t)
 (global-linum-mode t)
 
-(use-package smartparens
-  :config
-  (progn
-    (require 'smartparens-config)
-    (smartparens-global-mode 1)))
+;;(use-package smartparens :quelpa
+;;  :config
+;;  (progn
+;;    (require 'smartparens-config)
+;;    (smartparens-global-mode 1)))
 
-(use-package whitespace
+(use-package whitespace :quelpa
   :config
   (progn
     (setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
@@ -170,20 +187,20 @@ Lets make emacs look and behave better.
       '((space-mark 32 [183] [46])
         (tab-mark 9 [9655 9] [92 9])))))
 
-(use-package ethan-wspace)
+(use-package ethan-wspace :quelpa)
 
-(use-package color-theme-sanityinc-tomorrow
+(use-package color-theme-sanityinc-tomorrow :quelpa
   ;; :functions color-theme-install
   ;; https://github.com/basille/.emacs.d/blob/master/init.el
   :init (load-theme 'sanityinc-tomorrow-eighties t))
 
-;; (use-package apropospriate-theme
+;; (use-package apropospriate-theme :quelpa
 ;; :defer t
 ;; :init (load-theme 'apropospriate-dark t)) ;; issues with this one, but nice for html-mode
 
-;;(use-package zenburn-theme)
+;;(use-package zenburn-theme :quelpa)
 ;;
-;;(use-package spacemacs-theme
+;;(use-package spacemacs-theme :quelpa
 ;;  :defer t
 ;;  :init
 ;;  (progn
@@ -198,13 +215,13 @@ Gotta navigate around emacs more efficiently, and this is how.
 #+BEGIN_SRC emacs-lisp
 
 ;; retain smex for the sort by most recent / frequently used commands
-(use-package smex
+(use-package smex :quelpa
   :config
   (progn
     (setq smex-save-file (concat dotemacs-cache-directory "smex-items"))))
 
-(use-package counsel)
-(use-package ivy
+(use-package counsel :quelpa)
+(use-package ivy :quelpa
   :config
   (progn
     (ivy-mode 1)
@@ -215,10 +232,11 @@ Gotta navigate around emacs more efficiently, and this is how.
       '((t . ivy--regex-fuzzy)))))
 
 ;; https://manuel-uberti.github.io/emacs/2016/09/17/validate/
-(use-package validate)
+;;(use-package validate :quelpa)
+(use-package validate :quelpa (validate :stable nil :fetcher github :repo "Malabarba/validate.el"))
 
 ;; https://github.com/krobertson/emacs.d/blob/master/packages.el
-(use-package projectile
+(use-package projectile :quelpa
   :config
   (progn
     (projectile-global-mode 1)
@@ -231,8 +249,8 @@ Gotta navigate around emacs more efficiently, and this is how.
     (setq projectile-known-projects-file (concat dotemacs-cache-directory "projectile-bookmarks.eld"))
     (setq projectile-require-project-root nil)))
 
-(use-package page-break-lines)
-(use-package dashboard
+(use-package page-break-lines :quelpa)
+(use-package dashboard :quelpa
   :ensure nil ;; git clone manually in ~/.emacs.d/custom/emacs-dashboard
   :config
   (progn
@@ -240,12 +258,12 @@ Gotta navigate around emacs more efficiently, and this is how.
     (setq dashboard-items '((recents  . 15)
                             (projects . 5)))))
 
-(use-package ace-jump-mode
+(use-package ace-jump-mode :quelpa
   :config
   (progn
     (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)))
 
-(use-package saveplace
+(use-package saveplace :quelpa
   :config
   (progn
     (setq-default save-place t)
@@ -265,15 +283,15 @@ Here we're going to make emacs a great coding environment.
 ;; enable seeing of git diffs
 ;; got git-gutter working properly with use-package
 ;; https://github.com/hlissner/emacs.d/blob/master/init/init-git.el
-(use-package git-gutter
+(use-package git-gutter :quelpa
   :diminish git-gutter-mode
   :config
   (progn
     (global-git-gutter-mode 1)))
 
-(use-package git-timemachine)
+(use-package git-timemachine :quelpa)
 
-(use-package magit
+(use-package magit :quelpa
   :config
   (progn
     ;; http://whattheemacsd.com/setup-magit.el-01.html
@@ -291,19 +309,19 @@ Here we're going to make emacs a great coding environment.
       (kill-buffer)
       (jump-to-register :magit-fullscreen))))
 
-(use-package web-mode
+(use-package web-mode :quelpa
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.gsp?\\'" . web-mode))))
 
-(use-package js2-mode
+(use-package js2-mode :quelpa
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.js?\\'" . js2-mode))))
 
 ;; https://github.com/jcf/emacs.d/blob/master/init-languages.org
-(use-package css-mode
+(use-package css-mode :quelpa
   :commands css-mode
   :init
   (setq css-indent-offset 2)
@@ -317,9 +335,9 @@ Here we're going to make emacs a great coding environment.
 ;; https://github.com/yasuyk/web-beautify
 ;; js-beautify installed by typing: npm -g install js-beautify
 (when (executable-find "js-beautify")
-  (use-package web-beautify))
+  (use-package web-beautify :quelpa))
 
-(use-package groovy-mode
+(use-package groovy-mode :quelpa
   :config
   (progn
     (autoload 'groovy-mode "groovy-mode" "Major mode for editing Groovy code." t)
@@ -327,24 +345,24 @@ Here we're going to make emacs a great coding environment.
     (add-to-list 'auto-mode-alist '("\.gradle$" . groovy-mode))
     (add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))))
 
-(use-package lua-mode
+(use-package lua-mode :quelpa
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.lua?\\'" . js2-mode))))
 
-(use-package vimrc-mode
+(use-package vimrc-mode :quelpa
   :config
   (progn
     (add-to-list 'auto-mode-alist '(".vim\\(rc\\)?$" . vimrc-mode))))
 
-(use-package drag-stuff
+(use-package drag-stuff :quelpa
   :config
   (progn
     (drag-stuff-global-mode t)))
 
 ;; http://stackoverflow.com/a/15310340/2741455
 ;; How to set defcustom variable
-(use-package linum-relative
+(use-package linum-relative :quelpa
   :config
   (progn
     (setq linum-relative-format "%3s ")
@@ -352,11 +370,11 @@ Here we're going to make emacs a great coding environment.
 
 (cond ((executable-find "pt")
         (progn
-          (use-package pt) ;; https://github.com/bling/pt.el
+          (use-package pt :quelpa) ;; https://github.com/bling/pt.el
           (defalias 'my-search-util 'projectile-pt)))  ;; seems pretty fast (faster than ag? maybe...dunno), but it's written in Go!
       ((executable-find "ag")
         (progn
-          (use-package ag) ;; https://github.com/Wilfred/ag.el
+          (use-package ag :quelpa) ;; https://github.com/Wilfred/ag.el
           (defalias 'my-search-util 'projectile-ag)))  ;; on the website, it said faster than ack
       ((executable-find "grep")
         (progn
@@ -368,12 +386,17 @@ Here we're going to make emacs a great coding environment.
 Lets add the awesome vim/modal editing keybindings. So much more fluid to edit with than emacs own.
 
 #+BEGIN_SRC emacs-lisp
-(use-package goto-chg)
+;;(use-package goto-chg :quelpa)
+;;(quelpa '(goto-chg :fetcher wiki :files ("goto-chg.el")))
+;;(quelpa '(goto-chg :url "https://www.emacswiki.org/emacs/download/goto-chg.el" :fetcher url))
+(use-package goto-chg :quelpa (goto-chg :stable nil :fetcher github :repo "benaiah/goto-chg"))
+
+
 ;; evil mode setup ;;;
 (setq evil-want-C-u-scroll t)
 (setq evil-want-C-w-in-emacs-state t)
 (setq evil-default-cursor t)
-(use-package evil
+(use-package evil :quelpa
   :config
   (progn
     (evil-mode 1)
@@ -427,13 +450,13 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
       (next-line 10)
       (evil-scroll-line-down 10)))
 
-    (use-package key-chord
+    (use-package key-chord :quelpa
       :config
       (progn
         (key-chord-mode 1)
 	(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)))
 
-    (use-package evil-leader
+    (use-package evil-leader :quelpa
       :config
       (progn
         (global-evil-leader-mode t)
@@ -453,7 +476,7 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
           "<down>" 'drag-stuff-down
           "<up>" 'drag-stuff-up)))
 
-    (use-package neotree
+    (use-package neotree :quelpa
       :config
       (progn
         (setq-default neo-show-hidden-files t)
@@ -515,44 +538,44 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
                       "gg" 'evil-goto-first-line)
                     neotree-mode-map))))
 
-    (use-package evil-nerd-commenter
+    (use-package evil-nerd-commenter :quelpa
       :commands (evilnc-comment-or-uncomment-lines)
       :config
       (progn
         (evilnc-default-hotkeys)))
 
-    (use-package evil-matchit
+    (use-package evil-matchit :quelpa
       :config
       (progn
         (global-evil-matchit-mode 1)))
 
-    (use-package evil-surround
+    (use-package evil-surround :quelpa
       :config
       (progn
         (global-evil-surround-mode 1)))
 
-    (use-package evil-visualstar
+    (use-package evil-visualstar :quelpa
       :config
       (progn
         (global-evil-visualstar-mode)))
 
-     ;; (use-package evil-tabs
+     ;; (use-package evil-tabs :quelpa
      ;;   :config
      ;;   (progn
      ;;     (global-evil-tabs-mode t)))
 
-     (use-package evil-quickscope
+     (use-package evil-quickscope :quelpa
        :config
        (progn
          (global-evil-quickscope-mode 1)))
 
-    (use-package evil-numbers
+    (use-package evil-numbers :quelpa
       :config
       (progn
         (define-key evil-normal-state-map (kbd "C-<right>") 'evil-numbers/inc-at-pt)
         (define-key evil-normal-state-map (kbd "C-<left>") 'evil-numbers/dec-at-pt)))
 
-    (use-package spaceline
+    (use-package spaceline :quelpa
       :config
       (progn
         (require 'spaceline-config)
@@ -566,6 +589,12 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
 Here are some last minute touches. Run silent package upgrader and elpa-mirror towards the end of this init file, because by then use-package will have installed all packages of interest into the ~/.emacs.d/elpa directory. After all packages are there, then is the proper time to backup them.
 
 #+BEGIN_SRC emacs-lisp
+
+;; https://github.com/quelpa/quelpa/issues/108
+;; https://stackoverflow.com/questions/1217180/how-do-i-byte-compile-everything-in-my-emacs-d-directory
+(require 'cl)
+(setq byte-compile-warnings nil)
+(byte-recompile-directory (expand-file-name "~/.emacs.d/quelpa/build") 0)
 
 ;; https://github.com/kiwanami/emacs-deferred
 ;; (deferred:$
