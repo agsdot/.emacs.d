@@ -74,6 +74,13 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 
 (use-package esup :quelpa)
 
+;; https://github.com/steckerhalter/steckemacs.el/blob/master/steckemacs.el
+(use-package seq
+  :quelpa (seq
+           :repo "NicolasPetton/seq.el"
+           :fetcher github)
+  :config (featurep 'seq))
+
 (use-package f :quelpa
   :config
   (progn
@@ -450,7 +457,8 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
       (next-line 10)
       (evil-scroll-line-down 10)))
 
-    (use-package key-chord :quelpa
+    (use-package key-chord
+      :quelpa (key-chord :stable nil :fetcher github :repo "emacsmirror/key-chord")
       :config
       (progn
         (key-chord-mode 1)
@@ -592,8 +600,24 @@ Here are some last minute touches. Run silent package upgrader and elpa-mirror t
 
 ;; https://github.com/quelpa/quelpa/issues/108
 ;; https://stackoverflow.com/questions/1217180/how-do-i-byte-compile-everything-in-my-emacs-d-directory
+
+
+;; https://emacs.stackexchange.com/questions/7653/elisp-code-to-check-for-internet-connection
+(defun internet-up-p (&optional host)
+    (= 0 (call-process "ping" nil nil nil "-c" "1" "-W" "1" 
+                       (if host host "www.google.com"))))
+(defun tzz-has-network ()
+  (remove-if (lambda (i)
+               (or (string-match-p "\\(vboxnet\\|docker\\).*" i)
+                   (member 'loopback (nth 4 (network-interface-info i)))))
+             (mapcar 'car (network-interface-list))))
+
+(setq warning-minimum-level :emergency)
 (require 'cl)
 (setq byte-compile-warnings nil)
+
+;; annoying alerts about bytecompile
+;;https://stackoverflow.com/questions/23749267/how-do-i-disable-warnings-at-initialization-in-emacs
 (byte-recompile-directory (expand-file-name "~/.emacs.d/quelpa/build") 0)
 
 ;; https://github.com/kiwanami/emacs-deferred
