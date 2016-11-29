@@ -21,15 +21,37 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
                          ;; it will install elpa packages from the "backup-elpa", the local backup
                          ;; ("backup-elpa" . "~/.emacs.d/.backup-elpa/")
 ))
-(eval-when-compile (package-initialize))
 
-(if (not (package-installed-p 'use-package))
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+(unless (require 'el-get nil 'noerror)
+  (require 'package)
+  (package-refresh-contents)
+  ;;(package-initialize)
+  (eval-when-compile (package-initialize))
+  (package-install 'el-get)
+  (require 'el-get))
+
+(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get/el-get/recipes")
+(el-get 'sync)
+
+;;(eval-when-compile (package-initialize))
+
+(if (not (package-installed-p 'req-package))
   (progn
     (package-refresh-contents)
-    (package-install 'use-package)))
+    (package-install 'req-package)))
 
-(require 'use-package)
-(setq use-package-always-ensure t)
+(require 'req-package)
+;; (setq req-package-always-ensure t)
+
+;;(eval-when-compile (package-initialize))
+;; el-get
+;;(req-package el-get ;; prepare el-get (optional)
+;;  :force t ;; load package immediately, no dependency resolution
+;;  :config
+;;  (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get/el-get/recipes")
+;;  (el-get 'sync))
 
 (let ((default-directory "~/.emacs.d/custom/"))
   (normal-top-level-add-to-load-path '("."))
@@ -55,22 +77,30 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 
 (setq custom-file (concat user-emacs-directory "custom/custom.el"))
 
-(use-package esup)
+(req-package esup :loader :el-get)
 
-(use-package f
+(setq recentf-save-file (concat dotemacs-cache-directory "recentf"))
+
+(req-package f :loader :el-get
+  :require f
   :config
-  (progn
     (unless (f-exists? dotemacs-cache-directory)
       (f-mkdir dotemacs-cache-directory))
     ;;(unless (f-exists? custom-file)
     ;;  (f-touch custom-file))
-    ))
+    (unless (f-exists? recentf-save-file)
+      (f-touch recentf-save-file)
+      (req-package s) ;; this should already be installed -- f.el has this as a dependency
+      (setq spacer-readme (s-concat (f-full user-emacs-directory) "README.md" )) ;; => /home/path/to/file
+      (setq spacer-recentf (s-concat "(setq recentf-list '(\"" spacer-readme "\")) (setq recentf-filter-changer-current 'nil)"))
+      (f-write spacer-recentf 'utf-8 recentf-save-file))
+    )
 
 ;; https://github.com/kiwanami/emacs-deferred
-(use-package deferred)
+(req-package deferred :loader :el-get)
 
 ;; SPU - Emacs Silent Package Upgrader
-(use-package spu
+(req-package spu :loader :elpa
   :config
   (progn
     (setq spu-log-path (concat dotemacs-cache-directory "spu_log/"))))
@@ -78,7 +108,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 ;; https://github.com/redguardtoo/elpa-mirror
 ;; For if/when melpa goes down, prepare for a backup
 ;; Use `M-x elpamr-create-mirror-for-installed` to create a local repository.
-(use-package elpa-mirror
+(req-package elpa-mirror :loader :elpa
   :config
   (progn
     (setq dotemacs-backup-elpa-directory (concat user-emacs-directory ".backup-elpa/"))
@@ -86,7 +116,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
     (unless (f-exists? dotemacs-backup-elpa-directory)
       (f-mkdir dotemacs-backup-elpa-directory))))
 
-(use-package undo-tree
+(req-package undo-tree :loader :el-get
   :config
   (progn
     (global-undo-tree-mode t)))
@@ -103,14 +133,21 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 ;; Don't automatically add newline to end of file
 (setq mode-require-final-newline nil)
 
-(setq recentf-save-file (concat dotemacs-cache-directory "recentf"))
-(if (not (f-exists? recentf-save-file))
-  (progn
-    (f-touch recentf-save-file)
-    (use-package s) ;; this should already be installed -- f.el has this as a dependency
-    (setq spacer-readme (s-concat (f-full user-emacs-directory) "README.md" )) ;; => /home/path/to/file
-    (setq spacer-recentf (s-concat "(setq recentf-list '(\"" spacer-readme "\")) (setq recentf-filter-changer-current 'nil)"))
-    (f-write spacer-recentf 'utf-8 recentf-save-file)))
+;; (setq recentf-save-file (concat dotemacs-cache-directory "recentf"))
+;; 
+;; (unless (f-exists? recentf-save-file)
+;;     (f-touch recentf-save-file)
+;;     (req-package s) ;; this should already be installed -- f.el has this as a dependency
+;;     (setq spacer-readme (s-concat (f-full user-emacs-directory) "README.md" )) ;; => /home/path/to/file
+;;     (setq spacer-recentf (s-concat "(setq recentf-list '(\"" spacer-readme "\")) (setq recentf-filter-changer-current 'nil)"))
+;;     (f-write spacer-recentf 'utf-8 recentf-save-file))
+
+;; (if (not (f-exists? recentf-save-file))
+;;     (f-touch recentf-save-file)
+;;     (req-package s) ;; this should already be installed -- f.el has this as a dependency
+;;     (setq spacer-readme (s-concat (f-full user-emacs-directory) "README.md" )) ;; => /home/path/to/file
+;;     (setq spacer-recentf (s-concat "(setq recentf-list '(\"" spacer-readme "\")) (setq recentf-filter-changer-current 'nil)"))
+;;     (f-write spacer-recentf 'utf-8 recentf-save-file))
 (setq recentf-max-menu-items 10)
 (setq recentf-auto-cleanup 'never)
 (recentf-mode 1)
@@ -156,13 +193,13 @@ Lets make emacs look and behave better.
 (column-number-mode t)
 (global-linum-mode t)
 
-(use-package smartparens
+(req-package smartparens :loader :el-get
   :config
   (progn
     (require 'smartparens-config)
     (smartparens-global-mode 1)))
 
-(use-package whitespace
+(req-package whitespace :loader :el-get
   :config
   (progn
     (setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
@@ -170,20 +207,20 @@ Lets make emacs look and behave better.
       '((space-mark 32 [183] [46])
         (tab-mark 9 [9655 9] [92 9])))))
 
-(use-package ethan-wspace)
+(req-package ethan-wspace :loader :el-get)
 
-(use-package color-theme-sanityinc-tomorrow
+(req-package color-theme-sanityinc-tomorrow :loader :elpa
   ;; :functions color-theme-install
   ;; https://github.com/basille/.emacs.d/blob/master/init.el
   :init (load-theme 'sanityinc-tomorrow-eighties t))
 
-;; (use-package apropospriate-theme
+;; (req-package apropospriate-theme
 ;; :defer t
 ;; :init (load-theme 'apropospriate-dark t)) ;; issues with this one, but nice for html-mode
 
-;;(use-package zenburn-theme)
+;;(req-package zenburn-theme)
 ;;
-;;(use-package spacemacs-theme
+;;(req-package spacemacs-theme
 ;;  :defer t
 ;;  :init
 ;;  (progn
@@ -197,9 +234,9 @@ Gotta navigate around emacs more efficiently, and this is how.
 
 #+BEGIN_SRC emacs-lisp
 
-(use-package counsel)
-(use-package ivy
-  :ensure smex ;; http://emacs.stackexchange.com/questions/17710/use-package-with-config-to-set-variables
+(req-package counsel :loader :elpa)
+(req-package ivy :loader :elpa
+  :ensure smex ;; http://emacs.stackexchange.com/questions/17710/req-package-with-config-to-set-variables
   :config
   (progn
     (setq smex-save-file (concat dotemacs-cache-directory "smex-items")) ;; retain smex for the sort by most recent / frequently used commands
@@ -211,10 +248,10 @@ Gotta navigate around emacs more efficiently, and this is how.
       '((t . ivy--regex-fuzzy)))))
 
 ;; https://manuel-uberti.github.io/emacs/2016/09/17/validate/
-(use-package validate)
+(req-package validate :loader :elpa)
 
 ;; https://github.com/krobertson/emacs.d/blob/master/packages.el
-(use-package projectile
+(req-package projectile :loader :el-get
   :config
   (progn
     (projectile-global-mode 1)
@@ -227,20 +264,20 @@ Gotta navigate around emacs more efficiently, and this is how.
     (setq projectile-known-projects-file (concat dotemacs-cache-directory "projectile-bookmarks.eld"))
     (setq projectile-require-project-root nil)))
 
-(use-package page-break-lines)
-(use-package dashboard
+(req-package page-break-lines :loader :elpa)
+(req-package dashboard :loader :elpa
   :config
   (progn
     (dashboard-setup-startup-hook)
-    (setq dashboard-items '((recents  . 15)
+    (setq dashboard-items '((recents  . 10)
                             (projects . 5)))))
 
-(use-package ace-jump-mode
+(req-package ace-jump-mode :loader :el-get
   :config
   (progn
     (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)))
 
-(use-package saveplace
+(req-package saveplace :loader :el-get
   :config
   (progn
     (setq-default save-place t)
@@ -258,17 +295,17 @@ Here we're going to make emacs a great coding environment.
 
 #+BEGIN_SRC emacs-lisp
 ;; enable seeing of git diffs
-;; got git-gutter working properly with use-package
+;; got git-gutter working properly with req-package
 ;; https://github.com/hlissner/emacs.d/blob/master/init/init-git.el
-(use-package git-gutter
+(req-package git-gutter :loader :el-get
   :diminish git-gutter-mode
   :config
   (progn
     (global-git-gutter-mode 1)))
 
-(use-package git-timemachine)
+(req-package git-timemachine :loader :el-get)
 
-(use-package magit
+(req-package magit :loader :el-get
   :config
   (progn
     ;; http://whattheemacsd.com/setup-magit.el-01.html
@@ -285,35 +322,36 @@ Here we're going to make emacs a great coding environment.
       (kill-buffer)
       (jump-to-register :magit-fullscreen))))
 
-(use-package web-mode
+(req-package web-mode :loader :el-get
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.gsp?\\'" . web-mode))))
 
-(use-package js2-mode
+(req-package js2-mode :loader :el-get
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.js?\\'" . js2-mode))))
 
 ;; https://github.com/jcf/emacs.d/blob/master/init-languages.org
-(use-package css-mode
-  :commands css-mode
-  :init
-  (setq css-indent-offset 2)
-  :config
-  (use-package rainbow-mode
-    :pin gnu ;; uses gnu and not melpa for its repo
-    :init
-    (dolist (hook '(css-mode-hook html-mode-hook))
-      (add-hook hook 'rainbow-mode))))
+;; (req-package css-mode
+;;   :loader :elpa
+;;   :commands css-mode
+;;   :init
+;;   (setq css-indent-offset 2)
+;;   :config
+;;   (req-package rainbow-mode
+;;     :pin gnu ;; uses gnu and not melpa for its repo
+;;     :init
+;;     (dolist (hook '(css-mode-hook html-mode-hook))
+;;       (add-hook hook 'rainbow-mode))))
 
 ;; https://github.com/yasuyk/web-beautify
 ;; js-beautify installed by typing: npm -g install js-beautify
 (when (executable-find "js-beautify")
-  (use-package web-beautify))
+  (req-package web-beautify :loader :el-get ))
 
-(use-package groovy-mode
+(req-package groovy-mode :loader :el-get
   :config
   (progn
     (autoload 'groovy-mode "groovy-mode" "Major mode for editing Groovy code." t)
@@ -321,24 +359,24 @@ Here we're going to make emacs a great coding environment.
     (add-to-list 'auto-mode-alist '("\.gradle$" . groovy-mode))
     (add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))))
 
-(use-package lua-mode
+(req-package lua-mode :loader :el-get
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.lua?\\'" . js2-mode))))
 
-(use-package vimrc-mode
+(req-package vimrc-mode :loader :el-get
   :config
   (progn
     (add-to-list 'auto-mode-alist '(".vim\\(rc\\)?$" . vimrc-mode))))
 
-(use-package drag-stuff
+(req-package drag-stuff :loader :el-get
   :config
   (progn
     (drag-stuff-global-mode t)))
 
 ;; http://stackoverflow.com/a/15310340/2741455
 ;; How to set defcustom variable
-(use-package linum-relative
+(req-package linum-relative :loader :el-get
   :config
   (progn
     (setq linum-relative-format "%3s ")
@@ -346,11 +384,11 @@ Here we're going to make emacs a great coding environment.
 
 (cond ((executable-find "pt")
         (progn
-          (use-package pt) ;; https://github.com/bling/pt.el
+          (req-package pt :loader :elpa ) ;; https://github.com/bling/pt.el
           (defalias 'my-search-util 'projectile-pt)))  ;; seems pretty fast (faster than ag? maybe...dunno), but it's written in Go!
       ((executable-find "ag")
         (progn
-          (use-package ag) ;; https://github.com/Wilfred/ag.el
+          (req-package ag :loader :el-get ) ;; https://github.com/Wilfred/ag.el
           (defalias 'my-search-util 'projectile-ag)))  ;; on the website, it said faster than ack
       ((executable-find "grep")
         (progn
@@ -362,12 +400,150 @@ Here we're going to make emacs a great coding environment.
 Lets add the awesome vim/modal editing keybindings. So much more fluid to edit with than emacs own.
 
 #+BEGIN_SRC emacs-lisp
-(use-package goto-chg)
+
+(req-package emacs-neotree :loader :el-get
+  :require evil
+  :config
+  (progn
+    (setq-default neo-show-hidden-files t)
+
+    ;; from https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-neotree.el
+    (setq neo-theme 'nerd) ; 'classic, 'nerd, 'ascii, 'arrow
+    (setq neo-vc-integration '(face char))
+    ;; Patch to fix vc integration
+    (defun neo-vc-for-node (node)
+      (let* ((backend (vc-backend node))
+             (vc-state (when backend (vc-state node backend))))
+        ;; (message "%s %s %s" node backend vc-state)
+        (cons (cdr (assoc vc-state neo-vc-state-char-alist))
+              (cl-case vc-state
+                (up-to-date       neo-vc-up-to-date-face)
+                (edited           neo-vc-edited-face)
+                (needs-update     neo-vc-needs-update-face)
+                (needs-merge      neo-vc-needs-merge-face)
+                (unlocked-changes neo-vc-unlocked-changes-face)
+                (added            neo-vc-added-face)
+                (removed          neo-vc-removed-face)
+                (conflict         neo-vc-conflict-face)
+                (missing          neo-vc-missing-face)
+                (ignored          neo-vc-ignored-face)
+                (unregistered     neo-vc-unregistered-face)
+                (user             neo-vc-user-face)
+                (t                neo-vc-default-face)))))
+    ;; from https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-neotree.el
+
+    ;; from https://github.com/andrewmcveigh/emacs.d
+    ;; get keybindings to work better in neotree with evil
+    (defun neotree-copy-file ()
+      (interactive)
+      (let* ((current-path (neo-buffer--get-filename-current-line))
+             (msg (format "Copy [%s] to: "
+                          (neo-path--file-short-name current-path)))
+             (to-path (read-file-name msg (file-name-directory current-path))))
+        (dired-copy-file current-path to-path t))
+      (neo-buffer--refresh t))
+    (define-minor-mode neotree-evil
+      "Use NERDTree bindings on neotree."
+      :lighter " NT"
+      :keymap (progn
+                (evil-make-overriding-map neotree-mode-map 'normal t)
+                (evil-define-key 'normal neotree-mode-map
+                  "C" 'neotree-change-root
+                  "U" 'neotree-select-up-node
+                  "r" 'neotree-refresh
+                  "o" 'neotree-enter
+                  (kbd "<return>") 'neotree-enter
+                  "i" 'neotree-enter-horizontal-split
+                  "s" 'neotree-enter-vertical-split
+                  "n" 'evil-search-next
+                  "N" 'evil-search-previous
+                  "ma" 'neotree-create-node
+                  "mc" 'neotree-copy-file
+                  "md" 'neotree-delete-node
+                  "mm" 'neotree-rename-node
+                  "gg" 'evil-goto-first-line)
+                neotree-mode-map))))
+
+(req-package evil-nerd-commenter :loader :el-get
+  :require evil
+  :commands (evilnc-comment-or-uncomment-lines)
+  :config
+  (progn
+    (evilnc-default-hotkeys)))
+
+(req-package evil-matchit :loader :el-get
+  :require evil
+  :config
+  (progn
+    (global-evil-matchit-mode 1)))
+
+(req-package evil-surround :loader :el-get
+  :require evil
+  :config
+  (progn
+    (global-evil-surround-mode 1)))
+
+(req-package evil-visualstar :loader :el-get
+  :require evil
+  :config
+  (progn
+    (global-evil-visualstar-mode)))
+
+(req-package evil-quickscope :loader :el-get
+  :require evil
+  :config
+  (progn
+    (global-evil-quickscope-mode 1)))
+
+(req-package evil-numbers :loader :el-get
+  :require evil
+  :config
+  (progn
+    (define-key evil-normal-state-map (kbd "C-<right>") 'evil-numbers/inc-at-pt)
+    (define-key evil-normal-state-map (kbd "C-<left>") 'evil-numbers/dec-at-pt)))
+
+(req-package spaceline :loader :el-get
+  :config
+  (progn
+    (require 'spaceline-config)
+    (spaceline-spacemacs-theme)))
+
+(req-package key-chord :loader :el-get
+  :require evil
+  :config
+  (progn
+    (key-chord-mode 1)
+    (key-chord-define evil-insert-state-map "kj" 'evil-normal-state)))
+
+(req-package evil-leader :loader :el-get
+  :require evil
+  :config
+  (progn
+    (global-evil-leader-mode t)
+    (evil-leader/set-leader ",")
+    (evil-leader/set-key
+      "a" 'ace-jump-mode
+      "b" 'ivy-switch-buffer
+      "e" 'eval-region
+      "f" 'my-search-util
+      "l" 'linum-relative-toggle
+      "k"  'kill-other-buffers
+      "nf" 'neotree-find
+      "nt" 'neotree-toggle
+      "p" 'projectile-find-file
+      "r" 'counsel-recentf
+      "/" 'evilnc-comment-or-uncomment-lines
+      "<down>" 'drag-stuff-down
+      "<up>" 'drag-stuff-up)))
+
+(req-package goto-chg :loader :el-get)
+
 ;; evil mode setup ;;;
 (setq evil-want-C-u-scroll t)
 (setq evil-want-C-w-in-emacs-state t)
 (setq evil-default-cursor t)
-(use-package evil
+(req-package evil 
+  :loader :el-get
   :config
   (progn
     (evil-mode 1)
@@ -420,143 +596,12 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
       (next-line 10)
       (evil-scroll-line-down 10)))
 
-    (use-package key-chord
-      :config
-      (progn
-        (key-chord-mode 1)
-	(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)))
-
-    (use-package evil-leader
-      :config
-      (progn
-        (global-evil-leader-mode t)
-        (evil-leader/set-leader ",")
-        (evil-leader/set-key
-          "a" 'ace-jump-mode
-          "b" 'ivy-switch-buffer
-          "e" 'eval-region
-          "f" 'my-search-util
-          "l" 'linum-relative-toggle
-          "k"  'kill-other-buffers
-          "nf" 'neotree-find
-          "nt" 'neotree-toggle
-          "p" 'projectile-find-file
-          "r" 'counsel-recentf
-          "/" 'evilnc-comment-or-uncomment-lines
-          "<down>" 'drag-stuff-down
-          "<up>" 'drag-stuff-up)))
-
-    (use-package neotree
-      :config
-      (progn
-        (setq-default neo-show-hidden-files t)
-
-        ;; from https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-neotree.el
-        (setq neo-theme 'nerd) ; 'classic, 'nerd, 'ascii, 'arrow
-        (setq neo-vc-integration '(face char))
-        ;; Patch to fix vc integration
-        (defun neo-vc-for-node (node)
-          (let* ((backend (vc-backend node))
-                 (vc-state (when backend (vc-state node backend))))
-            ;; (message "%s %s %s" node backend vc-state)
-            (cons (cdr (assoc vc-state neo-vc-state-char-alist))
-                  (cl-case vc-state
-                    (up-to-date       neo-vc-up-to-date-face)
-                    (edited           neo-vc-edited-face)
-                    (needs-update     neo-vc-needs-update-face)
-                    (needs-merge      neo-vc-needs-merge-face)
-                    (unlocked-changes neo-vc-unlocked-changes-face)
-                    (added            neo-vc-added-face)
-                    (removed          neo-vc-removed-face)
-                    (conflict         neo-vc-conflict-face)
-                    (missing          neo-vc-missing-face)
-                    (ignored          neo-vc-ignored-face)
-                    (unregistered     neo-vc-unregistered-face)
-                    (user             neo-vc-user-face)
-                    (t                neo-vc-default-face)))))
-        ;; from https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-neotree.el
-
-        ;; from https://github.com/andrewmcveigh/emacs.d
-        ;; get keybindings to work better in neotree with evil
-        (defun neotree-copy-file ()
-          (interactive)
-          (let* ((current-path (neo-buffer--get-filename-current-line))
-                 (msg (format "Copy [%s] to: "
-                              (neo-path--file-short-name current-path)))
-                 (to-path (read-file-name msg (file-name-directory current-path))))
-            (dired-copy-file current-path to-path t))
-          (neo-buffer--refresh t))
-        (define-minor-mode neotree-evil
-          "Use NERDTree bindings on neotree."
-          :lighter " NT"
-          :keymap (progn
-                    (evil-make-overriding-map neotree-mode-map 'normal t)
-                    (evil-define-key 'normal neotree-mode-map
-                      "C" 'neotree-change-root
-                      "U" 'neotree-select-up-node
-                      "r" 'neotree-refresh
-                      "o" 'neotree-enter
-                      (kbd "<return>") 'neotree-enter
-                      "i" 'neotree-enter-horizontal-split
-                      "s" 'neotree-enter-vertical-split
-                      "n" 'evil-search-next
-                      "N" 'evil-search-previous
-                      "ma" 'neotree-create-node
-                      "mc" 'neotree-copy-file
-                      "md" 'neotree-delete-node
-                      "mm" 'neotree-rename-node
-                      "gg" 'evil-goto-first-line)
-                    neotree-mode-map))))
-
-    (use-package evil-nerd-commenter
-      :commands (evilnc-comment-or-uncomment-lines)
-      :config
-      (progn
-        (evilnc-default-hotkeys)))
-
-    (use-package evil-matchit
-      :config
-      (progn
-        (global-evil-matchit-mode 1)))
-
-    (use-package evil-surround
-      :config
-      (progn
-        (global-evil-surround-mode 1)))
-
-    (use-package evil-visualstar
-      :config
-      (progn
-        (global-evil-visualstar-mode)))
-
-     ;; (use-package evil-tabs
-     ;;   :config
-     ;;   (progn
-     ;;     (global-evil-tabs-mode t)))
-
-     (use-package evil-quickscope
-       :config
-       (progn
-         (global-evil-quickscope-mode 1)))
-
-    (use-package evil-numbers
-      :config
-      (progn
-        (define-key evil-normal-state-map (kbd "C-<right>") 'evil-numbers/inc-at-pt)
-        (define-key evil-normal-state-map (kbd "C-<left>") 'evil-numbers/dec-at-pt)))
-
-    (use-package spaceline
-      :config
-      (progn
-        (require 'spaceline-config)
-        (spaceline-spacemacs-theme)))
-
 ))
 
 #+END_SRC
 
 ** init-last-minute-touches
-Here are some last minute touches. Run silent package upgrader and elpa-mirror towards the end of this init file, because by then use-package will have installed all packages of interest into the ~/.emacs.d/elpa directory. After all packages are there, then is the proper time to backup them.
+Here are some last minute touches. Run silent package upgrader and elpa-mirror towards the end of this init file, because by then req-package will have installed all packages of interest into the ~/.emacs.d/elpa directory. After all packages are there, then is the proper time to backup them.
 
 #+BEGIN_SRC emacs-lisp
 
@@ -572,5 +617,8 @@ Here are some last minute touches. Run silent package upgrader and elpa-mirror t
 ;;     (lambda ()
 ;;       (elpamr-create-mirror-for-installed)
 ;;       (message "Elpa packages backed up to ~/.emacs.d/.backup-elpa/" ))))
+
+(setq warning-minimum-level :emergency)
+(req-package-finish)
 
 #+END_SRC
