@@ -88,3 +88,9 @@ More notes on setting up Ivy/Swiper/Counsel (a replacament for Ido and Helm)
   - http://emacsist.com/10865
   - https://www.reddit.com/r/emacs/comments/51lqn9/helm_or_ivy/
   - https://sam217pa.github.io/2016/09/13/from-helm-to-ivy/
+
+
+el-get setup
+  - brew install texinfo
+  - brew link texinfo --force
+    - https://github.com/dimitri/el-get/issues/2306

@@ -20,7 +20,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
     (goto-char (point-max))
     (eval-print-last-sexp)))
 
-(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get/el-get/recipes")
+(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
 (el-get 'sync)
 
 ;; https://stackoverflow.com/questions/23165158/how-do-i-install-melpa-packages-via-el-get
@@ -28,31 +28,11 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (setq package-archives nil)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
-(package-initialize)
+(eval-when-compile (package-initialize))
 (require 'el-get-elpa)
 (unless (file-directory-p el-get-recipe-path-elpa)
   (el-get-elpa-build-local-recipes))
 
-
-;;(require 'package)
-;;(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-;;                         ("gnu" . "http://elpa.gnu.org/packages/")
-;;                         ;; ("popkit" . "https://elpa.popkit.org/packages/") ;; in case melpa goes down, have this backup mirror
-;;
-;;                         ;; ("org" . "http://orgmode.org/elpa/")
-;;                         ;; uncomment the below line if an elpa is down (e.g. melpa.org)
-;;                         ;; it will install elpa packages from the "backup-elpa", the local backup
-;;                         ;; ("backup-elpa" . "~/.emacs.d/.backup-elpa/")
-;;))
-;;(eval-when-compile (package-initialize))
-;;
-;;(if (not (package-installed-p 'use-package))
-;;  (progn
-;;    (package-refresh-contents)
-;;    (package-install 'use-package)))
-;;
-;;(require 'use-package)
-;;(setq use-package-always-ensure t)
 (el-get-bundle use-package)
 
 (let ((default-directory "~/.emacs.d/custom/"))
@@ -61,15 +41,15 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 
 (require 'dired-x)
 (require 'cross-platform-copy-paste)
-;;
-;;;; http://stackoverflow.com/questions/1480572/how-to-have-emacs-auto-refresh-all-buffers-when-files-have-changed-on-disk
+
+;; http://stackoverflow.com/questions/1480572/how-to-have-emacs-auto-refresh-all-buffers-when-files-have-changed-on-disk
 (global-auto-revert-mode t)
-;;
+
 (defcustom dotemacs-cache-directory (concat user-emacs-directory ".cache/")
   "The storage location for various persistent files.")
-;;
-;;;; Backup Files location
-;;;; https://github.com/bling/dotemacs/blob/master/config/init-core.el
+
+;; Backup Files location
+;; https://github.com/bling/dotemacs/blob/master/config/init-core.el
 (setq backup-directory-alist
   `((".*" . ,(concat dotemacs-cache-directory "backups")))
   auto-save-file-name-transforms
@@ -80,7 +60,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (setq custom-file (concat user-emacs-directory "custom/custom.el"))
 
 ;;(use-package esup)
-;;
+
 (el-get-bundle f)
 (use-package f
   :config
@@ -91,45 +71,35 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
     ;;  (f-touch custom-file))
     ))
 
-;;;; https://github.com/kiwanami/emacs-deferred
+;; https://github.com/kiwanami/emacs-deferred
 (el-get-bundle deferred)
 (use-package deferred)
-;;
-;;;; SPU - Emacs Silent Package Upgrader
+
+;; SPU - Emacs Silent Package Upgrader
 ;;(use-package spu
 ;;  :config
 ;;  (progn
 ;;    (setq spu-log-path (concat dotemacs-cache-directory "spu_log/"))))
-;;
-;;;; https://github.com/redguardtoo/elpa-mirror
-;;;; For if/when melpa goes down, prepare for a backup
-;;;; Use `M-x elpamr-create-mirror-for-installed` to create a local repository.
-;;(use-package elpa-mirror
-;;  :config
-;;  (progn
-;;    (setq dotemacs-backup-elpa-directory (concat user-emacs-directory ".backup-elpa/"))
-;;    (setq elpamr-default-output-directory dotemacs-backup-elpa-directory)
-;;    (unless (f-exists? dotemacs-backup-elpa-directory)
-;;      (f-mkdir dotemacs-backup-elpa-directory))))
-;;
+
 (el-get-bundle undo-tree)
 (use-package undo-tree
   :config
   (progn
     (global-undo-tree-mode t)))
-;;
-;;;; Dont display logo at startup
+
+;; Dont display logo at startup
 (setq inhibit-startup-message t)
-;;
-;;;; How do I change the scratch message in Emacs?
-;;;; http://stackoverflow.com/a/1498292/2741455
+
+;; How do I change the scratch message in Emacs?
+;; http://stackoverflow.com/a/1498292/2741455
 (setq initial-scratch-message ";; This is the Emacs Scratch Buffer")
-;;
+
 (defalias 'yes-or-no-p 'y-or-n-p)
-;;
-;;;; Don't automatically add newline to end of file
+
+;; Don't automatically add newline to end of file
 (setq mode-require-final-newline nil)
-;;
+
+(setq bookmark-default-file  (concat dotemacs-cache-directory "bookmarks"))
 (setq recentf-save-file (concat dotemacs-cache-directory "recentf"))
 (if (not (f-exists? recentf-save-file))
   (progn
@@ -148,15 +118,15 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (setq visible-bell 1)
 (menu-bar-mode -1)
 
-;;;; recentf hook for when a file is not opened, but just a scratch buffer, then load recentf
-;;;; (defun recentf-open-files-hook ()
-;;;;   ;;(if (not (f-this-file))
-;;;;   ;;  (recentf-open-files))
-;;;;   (if (eq (buffer-file-name) nil)
-;;;;     (recentf-open-files)))
-;;
-;;;; (add-hook 'emacs-startup-hook 'recentf-open-files-hook)
-;;
+;; recentf hook for when a file is not opened, but just a scratch buffer, then load recentf
+;; (defun recentf-open-files-hook ()
+;;   ;;(if (not (f-this-file))
+;;   ;;  (recentf-open-files))
+;;   (if (eq (buffer-file-name) nil)
+;;     (recentf-open-files)))
+
+;; (add-hook 'emacs-startup-hook 'recentf-open-files-hook)
+
 ;; Closing all other buffers in Emacs
 ;; http://stackoverflow.com/a/3417473/2741455
 (defun kill-other-buffers ()
@@ -166,18 +136,15 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
     (delq (current-buffer)
       (remove-if-not 'buffer-file-name (buffer-list)))))
 
-;;;; http://stackoverflow.com/questions/5052088/what-is-custom-set-variables-and-faces-in-my-emacs
-;;;; http://emacsblog.org/2008/12/06/quick-tip-detaching-the-custom-file/
+;; http://stackoverflow.com/questions/5052088/what-is-custom-set-variables-and-faces-in-my-emacs
+;; http://emacsblog.org/2008/12/06/quick-tip-detaching-the-custom-file/
 (setq custom-file "~/.emacs.d/custom/custom.el")
 (load custom-file 'noerror)
-;;
 
 (setq tramp-default-method "ssh")
 ;; https://github.com/syl20bnr/spacemacs/issues/192
 ;; find-tag-noselect' got redefined...noise
 (setq ad-redefinition-action 'accept)
-
-
 
 #+END_SRC
 
@@ -208,53 +175,48 @@ Lets make emacs look and behave better.
 (el-get-bundle ethan-wspace)
 (use-package ethan-wspace)
 
-;;(el-get-bundle color-theme-sanityinc-tomorrow)
-
-;;(add-to-list 'load-path "~/.emacs.d/el-get/color-theme-sanityinc-tomorrow/")
-;;(el-get-bundle color-theme-sanityinc-tomorrow
-;;  :url "purcell/color-theme-sanityinc-tomorrow")
-;;
-;;(use-package color-theme-sanityinc-tomorrow
-;;  ;; :functions color-theme-install
-;;  ;; https://github.com/basille/.emacs.d/blob/master/init.el
-;;  ;;:init (load-theme 'sanityinc-tomorrow-eighties t))
-;;  :init (color-theme-sanityinc-tomorrow-eighties))
-
-
-;;(el-get-bundle color-theme-sanityinc-tomorrow
-;;  :url "purcell/color-theme-sanityinc-tomorrow"
-;;  (load-theme 'sanityinc-tomorrow-eighties t))
-
-;;(add-to-list 'load-path "~/.emacs.d/el-get/color-theme-sanityinc-tomorrow/")
-
-;; +++ ;;;
-;; best tomorrow theme adaptation, just slow loading
-;;(el-get-bundle color-theme-sanityinc-tomorrow)
-;;  ;;:url "purcell/color-theme-sanityinc-tomorrow")
-;;
-;;(use-package color-theme-sanityinc-tomorrow
-;;  ;; :functions color-theme-install
-;;  ;; https://github.com/basille/.emacs.d/blob/master/init.el
-;;  ;;:init (load-theme 'sanityinc-tomorrow-eighties t))
-;;  :init (color-theme-sanityinc-tomorrow-eighties))
-;; +++ ;;;
-
-;;;; (use-package apropospriate-theme
-;;;; :defer t
-;;;; :init (load-theme 'apropospriate-dark t)) ;; issues with this one, but nice for html-mode
-;;
-;;(el-get-bundle zenburn-theme)
-;;(use-package zenburn-theme)
+(el-get-bundle apropospriate-theme)
+;;(use-package apropospriate-theme
+;;  :init
+;;  (progn
+;;    (load-theme 'apropospriate-dark t)))
 
 (el-get-bundle atom-dark-theme)
-(use-package atom-dark-theme)
-;;;;
-;;;;(use-package spacemacs-theme
-;;;;  :defer t
-;;;;  :init
-;;;;  (progn
-;;;;    (load-theme 'spacemacs-dark t)))
+;;(use-package atom-dark-theme)
 
+;;(use-package spacemacs-theme
+;;  :defer t
+;;  :init
+;;  (progn
+;;    (load-theme 'spacemacs-dark t)))
+
+(el-get-bundle zenburn-theme)
+;;(use-package zenburn-theme
+;;  :init
+;;  (progn
+;;    (load-theme 'zenburn t)))
+
+(el-get-bundle seoul256-theme)
+(use-package seoul256-theme
+  :init
+  (progn
+    (setq seoul256-background 235)
+    (load-theme 'seoul256 t)))
+
+(el-get-bundle ample-theme)
+;;(use-package ample-theme
+;;  :init
+;;  (progn
+;;    (load-theme 'ample t t)
+;;    (load-theme 'ample-flat t t)
+;;    (load-theme 'ample-light t t)
+;;    (enable-theme 'ample-flat)))
+
+(el-get-bundle monokai-theme)
+;;(use-package monokai-theme
+;;  :init
+;;  (progn
+;;    (load-theme 'monokai t)))
 
 #+END_SRC
 
@@ -264,8 +226,6 @@ Gotta navigate around emacs more efficiently, and this is how.
 #+BEGIN_SRC emacs-lisp
 
 (el-get-bundle smex)
-;;(el-get-bundle swiper)
-;;(use-package counsel)
 
 (el-get-bundle swiper
   :features ivy)
@@ -275,16 +235,24 @@ Gotta navigate around emacs more efficiently, and this is how.
   (progn
     (setq smex-save-file (concat dotemacs-cache-directory "smex-items")) ;; retain smex for the sort by most recent / frequently used commands
     (ivy-mode 1)
+    ;; https://github.com/abo-abo/swiper/issues/164
+    (define-key
+      ivy-switch-buffer-map
+      (kbd "C-k")
+      (lambda ()
+        (interactive)
+        (ivy-set-action 'kill-buffer)
+        (ivy-done)))
     (global-set-key (kbd "M-x") 'counsel-M-x) ;; when in Emacs keybindings
     (setq ivy-height 14) ;; number of result lines to display
     ;; (setq ivy-initial-inputs-alist nil) ;; no regexp by default
     (setq ivy-re-builders-alist
       '((t . ivy--regex-fuzzy)))))
 
-;;;; https://manuel-uberti.github.io/emacs/2016/09/17/validate/
+;; https://manuel-uberti.github.io/emacs/2016/09/17/validate/
 ;;(use-package validate)
 ;;
-;;;; https://github.com/krobertson/emacs.d/blob/master/packages.el
+;; https://github.com/krobertson/emacs.d/blob/master/packages.el
 (el-get-bundle projectile)
 (use-package projectile
   :config
@@ -299,20 +267,13 @@ Gotta navigate around emacs more efficiently, and this is how.
     (setq projectile-known-projects-file (concat dotemacs-cache-directory "projectile-bookmarks.eld"))
     (setq projectile-require-project-root nil)))
 
-(el-get-bundle page-break-lines)
-(use-package page-break-lines)
-;;(el-get-bundle dashboard
-;;  :url "https://github.com/rakanalh/emacs-dashboard"
-;;  :features dashboard)
-;;(el-get-bundle dashboard)
-
-
 (el-get-bundle dashboard)
 (use-package dashboard
   :config
   (progn
     (dashboard-setup-startup-hook)
     (setq dashboard-items '((recents  . 15)
+                            (bookmarks  . 5)
                             (projects . 5)))))
 
 (el-get-bundle ace-jump-mode)
@@ -338,7 +299,7 @@ Here we're going to make emacs a great coding environment.
 #+BEGIN_SRC emacs-lisp
 ;; enable seeing of git diffs
 ;; got git-gutter working properly with use-package
-;;;; https://github.com/hlissner/emacs.d/blob/master/init/init-git.el
+;; https://github.com/hlissner/emacs.d/blob/master/init/init-git.el
 (el-get-bundle git-gutter)
 (use-package git-gutter
   :diminish git-gutter-mode
@@ -375,6 +336,9 @@ Here we're going to make emacs a great coding environment.
     (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.gsp?\\'" . web-mode))))
 
+(el-get-bundle editorconfig)
+(use-package editorconfig)
+
 (el-get-bundle js2-mode)
 (use-package js2-mode
   :config
@@ -388,7 +352,7 @@ Here we're going to make emacs a great coding environment.
     (add-to-list 'auto-mode-alist '("\\.jade?\\'" . jade-mode))
     (add-to-list 'auto-mode-alist '("\\.pug?\\'" . jade-mode))))
 
-;;;; https://github.com/jcf/emacs.d/blob/master/init-languages.org
+;; https://github.com/jcf/emacs.d/blob/master/init-languages.org
 (require 'css-mode)
 (setq css-indent-offset 2)
 
@@ -398,8 +362,8 @@ Here we're going to make emacs a great coding environment.
   (dolist (hook '(css-mode-hook html-mode-hook))
     (add-hook hook 'rainbow-mode)))
 
-;;;; https://github.com/yasuyk/web-beautify
-;;;; js-beautify installed by typing: npm -g install js-beautify
+;; https://github.com/yasuyk/web-beautify
+;; js-beautify installed by typing: npm -g install js-beautify
 (when (executable-find "js-beautify")
   (el-get-bundle web-beautify)
   (use-package web-beautify))
@@ -431,8 +395,8 @@ Here we're going to make emacs a great coding environment.
   (progn
     (drag-stuff-global-mode t)))
 
-;;;; http://stackoverflow.com/a/15310340/2741455
-;;;; How to set defcustom variable
+;; http://stackoverflow.com/a/15310340/2741455
+;; How to set defcustom variable
 (el-get-bundle linum-relative)
 (use-package linum-relative
   :config
@@ -442,7 +406,7 @@ Here we're going to make emacs a great coding environment.
 
 (cond ((executable-find "pt")
         (progn
-	  (el-get-bundle pt)
+          (el-get-bundle pt)
           (use-package pt) ;; https://github.com/bling/pt.el
           (defalias 'my-search-util 'projectile-pt)))  ;; seems pretty fast (faster than ag? maybe...dunno), but it's written in Go!
       ((executable-find "ag")
@@ -462,7 +426,7 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
 #+BEGIN_SRC emacs-lisp
 (el-get-bundle goto-chg)
 (use-package goto-chg)
-;;;; evil mode setup ;;;
+;; evil mode setup ;;
 (setq evil-want-C-w-in-emacs-state t)
 (setq evil-default-cursor t)
 (el-get-bundle evil)

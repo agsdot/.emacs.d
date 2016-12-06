@@ -1,0 +1,4 @@
+(:name seoul256-theme
+       :type github
+       :pkgname "anandpiyer/seoul256-emacs"
+       :prepare (add-to-list 'custom-theme-load-path default-directory))

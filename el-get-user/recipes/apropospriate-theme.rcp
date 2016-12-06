@@ -1,0 +1,4 @@
+(:name apropospriate-theme
+       :type github
+       :pkgname "waymondo/apropospriate-theme"
+       :prepare (add-to-list 'custom-theme-load-path default-directory))
