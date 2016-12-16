@@ -418,6 +418,66 @@ Here we're going to make emacs a great coding environment.
         (progn
           (defalias 'my-search-util 'projectile-grep))))
 
+;; setup clojure ;;
+;; https://github.com/weavejester/dotfiles/blob/master/emacs.d/init.el ;;
+(el-get-bundle clojure-mode)
+(use-package clojure-mode
+  :mode (("\\.edn$" . clojure-mode))
+  :config
+  (progn
+    (define-clojure-indent
+      (defroutes 'defun)
+      (context 2)
+      (let-routes 1))
+
+    (defun toggle-nrepl-buffer ()
+      "Toggle the nREPL REPL on and off"
+      (interactive)
+      (if (string-match "cider-repl" (buffer-name (current-buffer)))
+          (delete-window)
+        (cider-switch-to-repl-buffer)))
+
+    (defun cider-save-and-refresh ()
+      (interactive)
+      (save-buffer)
+      (call-interactively 'cider-refresh))
+
+    (evil-leader/set-key "eb" 'cider-eval-buffer)
+    (evil-leader/set-key "ee" 'cider-eval-last-sexp)
+    (evil-leader/set-key "er" 'cider-eval-region)
+    (evil-leader/set-key "ef" 'cider-eval-defun-at-point)
+
+    (evil-leader/set-key "cd" 'cider-doc)
+    (evil-leader/set-key "cc" 'cider-connect)
+    (evil-leader/set-key "cj" 'cider-jack-in)
+    (evil-leader/set-key "cJ" 'cider-jack-in-clojurescript)
+    (evil-leader/set-key "ct" 'cider-test-run-ns-tests)
+    (evil-leader/set-key "cT" 'cider-test-run-project-tests)
+    (evil-leader/set-key "cn" 'cider-repl-set-ns)
+    (evil-leader/set-key "cr" 'toggle-nrepl-buffer)
+    (evil-leader/set-key "cf" 'cider-save-and-refresh)
+
+    (global-set-key (kbd "s-r") 'cider-save-and-refresh)))
+
+(el-get-bundle cider)
+(use-package cider
+  :init
+  (progn
+    (add-hook 'cider-repl-mode-hook 'subword-mode))
+  :config
+  (progn
+    (setq nrepl-hide-special-buffers t)
+    (setq cider-popup-stacktraces-in-repl t)
+    (setq cider-repl-history-file "~/.emacs.d/.cache/nrepl-history")
+    (setq cider-repl-pop-to-buffer-on-connect nil)
+    (setq cider-repl-use-clojure-font-lock nil)
+    (setq cider-auto-select-error-buffer nil)
+    (setq cider-prompt-save-file-on-load nil)
+    (setq cider-repl-display-help-banner nil)
+    (setq cider-refresh-before-fn "reloaded.repl/suspend")
+    (setq cider-refresh-after-fn "reloaded.repl/resume")
+    (setq cider-cljs-lein-repl "(do (reloaded.repl/go) (user/cljs-repl))")))
+
 #+END_SRC
 
 ** init-evil
