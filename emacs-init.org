@@ -141,10 +141,31 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 ;; http://stackoverflow.com/a/3417473/2741455
 (defun kill-other-buffers ()
   "Kill all other buffers."
+  ;; http://emacs.stackexchange.com/questions/14509/kill-process-buffer-without-confirmation
+  ;; not used yet, but may be useful later
+  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
   (interactive)
+  ;; http://stackoverflow.com/questions/3417438/closing-all-other-buffers-in-emacs
   (mapc 'kill-buffer
     (delq (current-buffer)
-      (remove-if-not 'buffer-file-name (buffer-list)))))
+      (remove-if-not 'buffer-file-name (buffer-list))))
+  ;; http://emacs.stackexchange.com/questions/202/close-all-dired-buffers
+  (mapc (lambda (buffer)
+    (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
+      (kill-buffer buffer)))
+        (buffer-list))
+  (custom/kill-buffers "^\\*magit") ;; kill magit buffers
+  (custom/kill-buffers "^\\*grep") ;; kill projectile grep
+  (custom/kill-buffers "^\\*pt") ;; kill projectile pt
+)
+
+;; https://github.com/magit/magit/issues/2124
+(defun custom/kill-buffers (regexp)
+  "Kill buffers matching REGEXP without asking for confirmation."
+  (interactive "sKill buffers matching this regular expression: ")
+  (cl-letf (((symbol-function 'kill-buffer-ask)
+    (lambda (buffer) (kill-buffer buffer))))
+    (kill-matching-buffers regexp)))
 
 ;; http://stackoverflow.com/questions/5052088/what-is-custom-set-variables-and-faces-in-my-emacs
 ;; http://emacsblog.org/2008/12/06/quick-tip-detaching-the-custom-file/
@@ -625,11 +646,12 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
           :config
           ;; Default commit editor opening in insert mode
           (add-hook 'with-editor-mode-hook 'evil-insert-state)
-          (evil-define-key 'normal with-editor-mode-map
-            (kbd "RET") 'with-editor-finish
-            [escape] 'with-editor-cancel)
-          (evil-define-key 'normal git-rebase-mode-map
-            "l" 'git-rebase-show-commit))
+          ;; (evil-define-key 'normal with-editor-mode-map
+          ;;   (kbd "RET") 'with-editor-finish
+          ;;   [escape] 'with-editor-cancel)
+          ;; (evil-define-key 'normal git-rebase-mode-map
+          ;;   "l" 'git-rebase-show-commit)
+	  )
         (defadvice magit-status (around magit-fullscreen activate)
           (window-configuration-to-register :magit-fullscreen)
           ad-do-it
