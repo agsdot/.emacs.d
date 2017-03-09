@@ -177,6 +177,9 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 ;; find-tag-noselect' got redefined...noise
 (setq ad-redefinition-action 'accept)
 
+(el-get-bundle restart-emacs)
+(use-package restart-emacs)
+
 #+END_SRC
 
 ** init-aesthetics
@@ -343,6 +346,9 @@ Here we're going to make emacs a great coding environment.
 (el-get-bundle git-timemachine)
 (use-package git-timemachine)
 
+(el-get-bundle editorconfig)
+(use-package editorconfig)
+
 (el-get-bundle web-mode)
 (use-package web-mode
   :config
@@ -351,8 +357,12 @@ Here we're going to make emacs a great coding environment.
     (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.gsp?\\'" . web-mode))))
 
-(el-get-bundle editorconfig)
-(use-package editorconfig)
+;; https://github.com/yasuyk/web-beautify
+;; js-beautify installed by typing: npm -g install js-beautify
+;; beautify js AND html AND css
+(when (executable-find "js-beautify")
+  (el-get-bundle web-beautify)
+  (use-package web-beautify))
 
 (el-get-bundle js2-mode)
 (use-package js2-mode
@@ -361,7 +371,21 @@ Here we're going to make emacs a great coding environment.
     (add-to-list 'auto-mode-alist '("\\.js?\\'" . js2-mode))))
 
 ;;http://stackoverflow.com/questions/28017629/how-do-i-set-indent-to-2-spaces-in-js2-mode
-(add-hook 'js2-mode-hook (lambda () (setq js2-basic-offset 2)))
+(add-hook 'js2-mode-hook
+  (lambda () (setq js2-basic-offset 2)))
+
+;; prettier installed by typing: npm -g install prettier
+(when (executable-find "prettier")
+  (el-get-bundle prettier-js)
+  (use-package prettier-js)
+  (setq prettier-target-mode "js2-mode")
+  (setq prettier-width-mode nil)
+  ;;(setq prettier-args '("--trailing-comma" "--single-quote" "--bracket-spacing"))
+  (setq prettier-args '("--single-quote" "--bracket-spacing"))
+  (add-hook 'js2-mode-hook
+    (lambda () (add-hook 'before-save-hook 'prettier-before-save)))
+  (eval-after-load 'js2-mode
+    '(define-key js2-mode-map (kbd "C-c j") 'prettier)))
 
 (el-get-bundle emacs-pug-mode)
 (use-package pug-mode
@@ -379,14 +403,6 @@ Here we're going to make emacs a great coding environment.
   :init
   (dolist (hook '(css-mode-hook html-mode-hook))
     (add-hook hook 'rainbow-mode)))
-
-;; https://github.com/yasuyk/web-beautify
-;; js-beautify installed by typing: npm -g install js-beautify
-(when (executable-find "js-beautify")
-  (el-get-bundle web-beautify)
-  (use-package web-beautify)
-  (eval-after-load 'js2-mode
-    '(define-key js2-mode-map (kbd "C-c b") 'web-beautify-js)))
 
 (el-get-bundle groovy-mode)
 (use-package groovy-mode
@@ -531,7 +547,7 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
           "b" 'ivy-switch-buffer
           "e" 'eval-region
           "f" 'my-search-util
-          "js" 'web-beautify-js
+          "j" 'prettier
           "l" 'linum-relative-toggle
           "k"  'kill-other-buffers
           "nf" 'neotree-find
