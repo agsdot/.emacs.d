@@ -227,17 +227,17 @@ Lets make emacs look and behave better.
 ;;    (load-theme 'spacemacs-dark t)))
 
 (el-get-bundle zenburn-theme)
-;;(use-package zenburn-theme
-;;  :init
-;;  (progn
-;;    (load-theme 'zenburn t)))
-
-(el-get-bundle seoul256-theme)
-(use-package seoul256-theme
+(use-package zenburn-theme
   :init
   (progn
-    (setq seoul256-background 235)
-    (load-theme 'seoul256 t)))
+    (load-theme 'zenburn t)))
+
+(el-get-bundle seoul256-theme)
+;;(use-package seoul256-theme
+;;  :init
+;;  (progn
+;;    (setq seoul256-background 235)
+;;    (load-theme 'seoul256 t)))
 
 (el-get-bundle ample-theme)
 ;;(use-package ample-theme
@@ -348,6 +348,15 @@ Here we're going to make emacs a great coding environment.
 
 (el-get-bundle editorconfig)
 (use-package editorconfig)
+
+(el-get-bundle php-mode)
+(use-package php-mode
+  :config
+  (progn
+    (add-to-list 'auto-mode-alist '("\\.php?\\'" . php-mode))
+    ;; for drupal file editing
+    (add-to-list 'auto-mode-alist '("\\.inc?\\'" . php-mode))
+    (add-to-list 'auto-mode-alist '("\\.module?\\'" . php-mode))))
 
 (el-get-bundle web-mode)
 (use-package web-mode
