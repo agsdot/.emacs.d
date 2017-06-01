@@ -227,17 +227,17 @@ Lets make emacs look and behave better.
 ;;    (load-theme 'spacemacs-dark t)))
 
 (el-get-bundle zenburn-theme)
-(use-package zenburn-theme
-  :init
-  (progn
-    (load-theme 'zenburn t)))
-
-(el-get-bundle seoul256-theme)
-;;(use-package seoul256-theme
+;;(use-package zenburn-theme
 ;;  :init
 ;;  (progn
-;;    (setq seoul256-background 235)
-;;    (load-theme 'seoul256 t)))
+;;    (load-theme 'zenburn t)))
+
+(el-get-bundle seoul256-theme)
+(use-package seoul256-theme
+  :init
+  (progn
+    (setq seoul256-background 235)
+    (load-theme 'seoul256 t)))
 
 (el-get-bundle ample-theme)
 ;;(use-package ample-theme
@@ -303,10 +303,17 @@ Gotta navigate around emacs more efficiently, and this is how.
     (setq projectile-known-projects-file (concat dotemacs-cache-directory "projectile-bookmarks.eld"))
     (setq projectile-require-project-root nil)))
 
+(el-get-bundle counsel-projectile)
+(use-package counsel-projectile
+  :config
+  (progn
+    (counsel-projectile-on)))
+
 (el-get-bundle dashboard)
 (use-package dashboard
   :config
   (progn
+    (setq show-trailing-whitespace nil)
     (dashboard-setup-startup-hook)
     (setq dashboard-items '((recents  . 15)
                             (bookmarks  . 5)
@@ -347,7 +354,10 @@ Here we're going to make emacs a great coding environment.
 (use-package git-timemachine)
 
 (el-get-bundle editorconfig)
-(use-package editorconfig)
+(use-package editorconfig
+  :config
+  (progn
+    (editorconfig-mode 1)))
 
 (el-get-bundle php-mode)
 (use-package php-mode
@@ -422,11 +432,18 @@ Here we're going to make emacs a great coding environment.
     (add-to-list 'auto-mode-alist '("\.gradle$" . groovy-mode))
     (add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))))
 
+(el-get-bundle go-mode)
+(use-package go-mode
+  :config
+  (progn
+    (autoload 'go-mode "go-mode" "Major mode for editing Go code." t)
+    (add-to-list 'auto-mode-alist '("\\.go?\\'" . go-mode))))
+
 (el-get-bundle lua-mode)
 (use-package lua-mode
   :config
   (progn
-    (add-to-list 'auto-mode-alist '("\\.lua?\\'" . js2-mode))))
+    (add-to-list 'auto-mode-alist '("\\.lua?\\'" . lua-mode))))
 
 (el-get-bundle vimrc-mode)
 (use-package vimrc-mode
@@ -462,6 +479,19 @@ Here we're going to make emacs a great coding environment.
       ((executable-find "grep")
         (progn
           (defalias 'my-search-util 'projectile-grep))))
+
+;; https://www.reddit.com/r/emacs/comments/6ddr7p/snippet_search_cheatsh_using_ivy/
+(defun ejmr-search-cheat-sh ()
+  "Search `http://cheat.sh/' for help on commands and code."
+  (interactive)
+  (ivy-read "Command or Topic: "
+      (process-lines "curl" "--silent" "http://cheat.sh/:list?T&q")
+      :require-match t
+      :sort t
+      :history 'ejmr-search-cheat-sh
+      :action (lambda (input)
+        (browse-url (concat "http://cheat.sh/" input "?T&q")))
+      :caller 'ejmr-search-cheat-sh))
 
 #+END_SRC
 
