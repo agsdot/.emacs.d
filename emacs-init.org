@@ -62,8 +62,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 
 ;;(use-package esup)
 
-(el-get-bundle f)
-(use-package f
+(el-get-use-package f
   :config
   (progn
     (unless (f-exists? dotemacs-cache-directory)
@@ -73,8 +72,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
     ))
 
 ;; https://github.com/kiwanami/emacs-deferred
-(el-get-bundle deferred)
-(use-package deferred)
+(el-get-use-package deferred)
 
 ;; SPU - Emacs Silent Package Upgrader
 ;;(use-package spu
@@ -82,8 +80,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 ;;  (progn
 ;;    (setq spu-log-path (concat dotemacs-cache-directory "spu_log/"))))
 
-(el-get-bundle undo-tree)
-(use-package undo-tree
+(el-get-use-package undo-tree
   :config
   (progn
     (global-undo-tree-mode t)))
@@ -178,8 +175,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 ;; find-tag-noselect' got redefined...noise
 (setq ad-redefinition-action 'accept)
 
-(el-get-bundle restart-emacs)
-(use-package restart-emacs)
+(el-get-use-package restart-emacs)
 
 #+END_SRC
 
@@ -191,8 +187,7 @@ Lets make emacs look and behave better.
 (column-number-mode t)
 (global-linum-mode t)
 
-(el-get-bundle smartparens)
-(use-package smartparens
+(el-get-use-package smartparens
   :config
   (progn
     (require 'smartparens-config)
@@ -200,8 +195,7 @@ Lets make emacs look and behave better.
 
 ;; http://stackoverflow.com/questions/34531831/highlighting-trailing-whitespace-in-emacs-without-changing-character
 (setq-default show-trailing-whitespace t)
-(el-get-bundle whitespace)
-(use-package whitespace
+(el-get-use-package whitespace
   :config
   (progn
     (setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
@@ -209,16 +203,15 @@ Lets make emacs look and behave better.
       '((space-mark 32 [183] [46])
         (tab-mark 9 [9655 9] [92 9])))))
 
-(el-get-bundle ethan-wspace)
-(use-package ethan-wspace)
+(el-get-use-package ethan-wspace)
 
-(el-get-bundle apropospriate-theme)
+(el-get-use-package apropospriate-theme)
 ;;(use-package apropospriate-theme
 ;;  :init
 ;;  (progn
 ;;    (load-theme 'apropospriate-dark t)))
 
-(el-get-bundle atom-dark-theme)
+(el-get-use-package atom-dark-theme)
 ;;(use-package atom-dark-theme)
 
 ;;(use-package spacemacs-theme
@@ -227,7 +220,7 @@ Lets make emacs look and behave better.
 ;;  (progn
 ;;    (load-theme 'spacemacs-dark t)))
 
-(el-get-bundle zenburn-theme)
+(el-get-use-package zenburn-theme)
 ;;(use-package zenburn-theme
 ;;  :init
 ;;  (progn
