@@ -41,6 +41,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 
 (require 'dired-x)
 (require 'cross-platform-copy-paste)
+(require 'el-get-use-package)
 
 ;; http://stackoverflow.com/questions/1480572/how-to-have-emacs-auto-refresh-all-buffers-when-files-have-changed-on-disk
 (global-auto-revert-mode t)
@@ -394,17 +395,17 @@ Here we're going to make emacs a great coding environment.
   (lambda () (setq js2-basic-offset 2)))
 
 ;; prettier installed by typing: npm -g install prettier
-(when (executable-find "prettier")
-  (el-get-bundle prettier-js)
-  (use-package prettier-js)
-  (setq prettier-target-mode "js2-mode")
-  (setq prettier-width-mode nil)
-  ;;(setq prettier-args '("--trailing-comma" "--single-quote" "--bracket-spacing"))
-  (setq prettier-args '("--single-quote" "--bracket-spacing"))
-  (add-hook 'js2-mode-hook
-    (lambda () (add-hook 'before-save-hook 'prettier-before-save)))
-  (eval-after-load 'js2-mode
-    '(define-key js2-mode-map (kbd "C-c j") 'prettier)))
+;;(when (executable-find "prettier")
+;;  (el-get-bundle prettier-js)
+;;  (use-package prettier-js)
+;;  (setq prettier-target-mode "js2-mode")
+;;  (setq prettier-width-mode nil)
+;;  ;;(setq prettier-args '("--trailing-comma" "--single-quote" "--bracket-spacing"))
+;;  (setq prettier-args '("--single-quote" "--bracket-spacing"))
+;;  (add-hook 'js2-mode-hook
+;;    (lambda () (add-hook 'before-save-hook 'prettier-before-save)))
+;;  (eval-after-load 'js2-mode
+;;    '(define-key js2-mode-map (kbd "C-c j") 'prettier)))
 
 (el-get-bundle emacs-pug-mode)
 (use-package pug-mode
