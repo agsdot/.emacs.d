@@ -283,8 +283,7 @@ Gotta navigate around emacs more efficiently, and this is how.
 ;;(use-package validate)
 ;;
 ;; https://github.com/krobertson/emacs.d/blob/master/packages.el
-(el-get-bundle projectile)
-(use-package projectile
+(el-get-use-package projectile
   :config
   (progn
     (projectile-global-mode 1)
@@ -297,14 +296,12 @@ Gotta navigate around emacs more efficiently, and this is how.
     (setq projectile-known-projects-file (concat dotemacs-cache-directory "projectile-bookmarks.eld"))
     (setq projectile-require-project-root nil)))
 
-(el-get-bundle counsel-projectile)
-(use-package counsel-projectile
+(el-get-use-package counsel-projectile
   :config
   (progn
     (counsel-projectile-on)))
 
-(el-get-bundle dashboard)
-(use-package dashboard
+(el-get-use-package dashboard
   :config
   (progn
     (setq show-trailing-whitespace nil)
@@ -313,8 +310,7 @@ Gotta navigate around emacs more efficiently, and this is how.
                             (bookmarks  . 5)
                             (projects . 5)))))
 
-(el-get-bundle ace-jump-mode)
-(use-package ace-jump-mode
+(el-get-use-package ace-jump-mode
   :config
   (progn
     (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)))
@@ -337,18 +333,15 @@ Here we're going to make emacs a great coding environment.
 ;; enable seeing of git diffs
 ;; got git-gutter working properly with use-package
 ;; https://github.com/hlissner/emacs.d/blob/master/init/init-git.el
-(el-get-bundle git-gutter)
-(use-package git-gutter
+(el-get-use-package git-gutter
   :diminish git-gutter-mode
   :config
   (progn
     (global-git-gutter-mode 1)))
 
-(el-get-bundle git-timemachine)
-(use-package git-timemachine)
+(el-get-use-package git-timemachine)
 
-(el-get-bundle editorconfig)
-(use-package editorconfig
+(el-get-use-package editorconfig
   :config
   (progn
     (editorconfig-mode 1)))
