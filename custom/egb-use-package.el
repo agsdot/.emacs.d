@@ -64,10 +64,14 @@
        	    el-get-form))
 
 (setq use-package-forms  (if el-get-features-present
-			         (if (pkgname-present)
-				     (nthcdr 4 use-package-forms) 
-				   (nthcdr 2 use-package-forms))
-				 use-package-forms))
+			     (if pkgname-present
+			         (nthcdr 4 use-package-forms)
+	                       (nthcdr 2 use-package-forms))
+                           (if pkgname-present
+			       (nthcdr 2 use-package-forms)
+			       use-package-forms
+			   )))
+
 
     `(progn (el-get-bundle ,el-get-form ,@el-get-features)
             (use-package ,pkgname
