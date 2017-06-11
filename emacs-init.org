@@ -34,6 +34,8 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
   (el-get-elpa-build-local-recipes))
 
 (el-get-bundle use-package)
+(el-get-bundle egb-use-package)
+(use-package egb-use-package)
 
 (let ((default-directory "~/.emacs.d/custom/"))
   (normal-top-level-add-to-load-path '("."))
@@ -41,7 +43,6 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 
 (require 'dired-x)
 (require 'cross-platform-copy-paste)
-(require 'egb-use-package)
 
 ;; http://stackoverflow.com/questions/1480572/how-to-have-emacs-auto-refresh-all-buffers-when-files-have-changed-on-disk
 (global-auto-revert-mode t)
