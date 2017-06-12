@@ -26,6 +26,7 @@
       (message "Yanked region to clipboard!")
       (deactivate-mark))
     (message "No region active; can't yank to clipboard!")))
+
 (defun paste-from-x-clipboard()
   (interactive)
   (shell-command
@@ -34,8 +35,6 @@
     ((eq system-type 'darwin) "pbpaste")
     (t "xsel -ob")
     )
-   1)
-  )
-
+   1))
 
 (provide 'cross-platform-copy-paste)

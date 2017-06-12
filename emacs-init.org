@@ -34,6 +34,8 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
   (el-get-elpa-build-local-recipes))
 
 (el-get-bundle use-package)
+(el-get-bundle egb-use-package)
+(use-package egb-use-package)
 
 (let ((default-directory "~/.emacs.d/custom/"))
   (normal-top-level-add-to-load-path '("."))
@@ -61,8 +63,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 
 ;;(use-package esup)
 
-(el-get-bundle f)
-(use-package f
+(egb-use-package f
   :config
   (progn
     (unless (f-exists? dotemacs-cache-directory)
@@ -72,8 +73,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
     ))
 
 ;; https://github.com/kiwanami/emacs-deferred
-(el-get-bundle deferred)
-(use-package deferred)
+(egb-use-package deferred)
 
 ;; SPU - Emacs Silent Package Upgrader
 ;;(use-package spu
@@ -81,8 +81,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 ;;  (progn
 ;;    (setq spu-log-path (concat dotemacs-cache-directory "spu_log/"))))
 
-(el-get-bundle undo-tree)
-(use-package undo-tree
+(egb-use-package undo-tree
   :config
   (progn
     (global-undo-tree-mode t)))
@@ -177,8 +176,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 ;; find-tag-noselect' got redefined...noise
 (setq ad-redefinition-action 'accept)
 
-(el-get-bundle restart-emacs)
-(use-package restart-emacs)
+(egb-use-package restart-emacs)
 
 #+END_SRC
 
@@ -190,8 +188,7 @@ Lets make emacs look and behave better.
 (column-number-mode t)
 (global-linum-mode t)
 
-(el-get-bundle smartparens)
-(use-package smartparens
+(egb-use-package smartparens
   :config
   (progn
     (require 'smartparens-config)
@@ -199,8 +196,7 @@ Lets make emacs look and behave better.
 
 ;; http://stackoverflow.com/questions/34531831/highlighting-trailing-whitespace-in-emacs-without-changing-character
 (setq-default show-trailing-whitespace t)
-(el-get-bundle whitespace)
-(use-package whitespace
+(egb-use-package whitespace
   :config
   (progn
     (setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
@@ -208,51 +204,49 @@ Lets make emacs look and behave better.
       '((space-mark 32 [183] [46])
         (tab-mark 9 [9655 9] [92 9])))))
 
-(el-get-bundle ethan-wspace)
-(use-package ethan-wspace)
+;;(egb-use-package ethan-wspace)
 
-(el-get-bundle apropospriate-theme)
+;;(egb-use-package apropospriate-theme)
 ;;(use-package apropospriate-theme
 ;;  :init
 ;;  (progn
 ;;    (load-theme 'apropospriate-dark t)))
 
-(el-get-bundle atom-dark-theme)
-;;(use-package atom-dark-theme)
-
-;;(use-package spacemacs-theme
-;;  :defer t
+;;(egb-use-package spacemacs-theme
+;;  :disabled
 ;;  :init
 ;;  (progn
 ;;    (load-theme 'spacemacs-dark t)))
 
-(el-get-bundle zenburn-theme)
-;;(use-package zenburn-theme
-;;  :init
-;;  (progn
-;;    (load-theme 'zenburn t)))
+(egb-use-package atom-dark-theme
+  :disabled)
 
-(el-get-bundle seoul256-theme)
-(use-package seoul256-theme
+(egb-use-package zenburn-theme
+  :disabled
+  :init
+  (progn
+    (load-theme 'zenburn t)))
+
+(egb-use-package seoul256-theme
   :init
   (progn
     (setq seoul256-background 235)
     (load-theme 'seoul256 t)))
 
-(el-get-bundle ample-theme)
-;;(use-package ample-theme
-;;  :init
-;;  (progn
-;;    (load-theme 'ample t t)
-;;    (load-theme 'ample-flat t t)
-;;    (load-theme 'ample-light t t)
-;;    (enable-theme 'ample-flat)))
+(egb-use-package ample-theme
+  :disabled
+  :init
+  (progn
+    (load-theme 'ample t t)
+    (load-theme 'ample-flat t t)
+    (load-theme 'ample-light t t)
+    (enable-theme 'ample-flat)))
 
-(el-get-bundle monokai-theme)
-;;(use-package monokai-theme
-;;  :init
-;;  (progn
-;;    (load-theme 'monokai t)))
+(egb-use-package monokai-theme
+  :disabled
+  :init
+  (progn
+    (load-theme 'monokai t)))
 
 #+END_SRC
 
@@ -261,11 +255,11 @@ Gotta navigate around emacs more efficiently, and this is how.
 
 #+BEGIN_SRC emacs-lisp
 
-(el-get-bundle smex)
+(egb-use-package smex)
 
-(el-get-bundle swiper
-  :features ivy)
-(use-package ivy
+(egb-use-package swiper
+  :features ivy
+  :pkgname ivy
   ;;:ensure smex ;; http://emacs.stackexchange.com/questions/17710/use-package-with-config-to-set-variables
   :config
   (progn
@@ -289,8 +283,7 @@ Gotta navigate around emacs more efficiently, and this is how.
 ;;(use-package validate)
 ;;
 ;; https://github.com/krobertson/emacs.d/blob/master/packages.el
-(el-get-bundle projectile)
-(use-package projectile
+(egb-use-package projectile
   :config
   (progn
     (projectile-global-mode 1)
@@ -303,14 +296,13 @@ Gotta navigate around emacs more efficiently, and this is how.
     (setq projectile-known-projects-file (concat dotemacs-cache-directory "projectile-bookmarks.eld"))
     (setq projectile-require-project-root nil)))
 
-(el-get-bundle counsel-projectile)
-(use-package counsel-projectile
+(egb-use-package counsel-projectile
+  :defer t
   :config
   (progn
     (counsel-projectile-on)))
 
-(el-get-bundle dashboard)
-(use-package dashboard
+(egb-use-package dashboard
   :config
   (progn
     (setq show-trailing-whitespace nil)
@@ -319,20 +311,19 @@ Gotta navigate around emacs more efficiently, and this is how.
                             (bookmarks  . 5)
                             (projects . 5)))))
 
-(el-get-bundle ace-jump-mode)
-(use-package ace-jump-mode
+(egb-use-package ace-jump-mode
   :config
   (progn
     (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)))
 
 (require 'saveplace)
-    (setq-default save-place t)
-    (setq save-place-forget-unreadable-files nil)
-    ;; Try to make emacsclient play nice with saveplace
-    ;; http://www.emacswiki.org/emacs/EmacsClient#toc35
-    (setq server-visit-hook (quote (save-place-find-file-hook)))
-    ;; rename this save file....
-    (setq save-place-file "~/.emacs.d/.cache/saved-places")
+(setq-default save-place t)
+(setq save-place-forget-unreadable-files nil)
+;; Try to make emacsclient play nice with saveplace
+;; http://www.emacswiki.org/emacs/EmacsClient#toc35
+(setq server-visit-hook (quote (save-place-find-file-hook)))
+;; rename this save file....
+(setq save-place-file "~/.emacs.d/.cache/saved-places")
 
 #+END_SRC
 
@@ -343,24 +334,20 @@ Here we're going to make emacs a great coding environment.
 ;; enable seeing of git diffs
 ;; got git-gutter working properly with use-package
 ;; https://github.com/hlissner/emacs.d/blob/master/init/init-git.el
-(el-get-bundle git-gutter)
-(use-package git-gutter
+(egb-use-package git-gutter
   :diminish git-gutter-mode
   :config
   (progn
     (global-git-gutter-mode 1)))
 
-(el-get-bundle git-timemachine)
-(use-package git-timemachine)
+(egb-use-package git-timemachine)
 
-(el-get-bundle editorconfig)
-(use-package editorconfig
+(egb-use-package editorconfig
   :config
   (progn
     (editorconfig-mode 1)))
 
-(el-get-bundle php-mode)
-(use-package php-mode
+(egb-use-package php-mode
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.php?\\'" . php-mode))
@@ -368,8 +355,7 @@ Here we're going to make emacs a great coding environment.
     (add-to-list 'auto-mode-alist '("\\.inc?\\'" . php-mode))
     (add-to-list 'auto-mode-alist '("\\.module?\\'" . php-mode))))
 
-(el-get-bundle web-mode)
-(use-package web-mode
+(egb-use-package web-mode
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . web-mode))
@@ -380,11 +366,9 @@ Here we're going to make emacs a great coding environment.
 ;; js-beautify installed by typing: npm -g install js-beautify
 ;; beautify js AND html AND css
 (when (executable-find "js-beautify")
-  (el-get-bundle web-beautify)
-  (use-package web-beautify))
+  (egb-use-package web-beautify))
 
-(el-get-bundle js2-mode)
-(use-package js2-mode
+(egb-use-package js2-mode
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.js?\\'" . js2-mode))))
@@ -395,16 +379,15 @@ Here we're going to make emacs a great coding environment.
 
 ;; prettier installed by typing: npm -g install prettier
 (when (executable-find "prettier")
-  (el-get-bundle prettier-js)
-  (use-package prettier-js)
+  (egb-use-package prettier-js)
   (setq prettier-js-width-mode nil)
   (setq prettier-js-args '("--single-quote" "--bracket-spacing"))
   (add-hook 'js2-mode-hook 'prettier-js-mode)
   (eval-after-load 'js2-mode
     '(define-key js2-mode-map (kbd "C-c j") 'prettier-js)))
 
-(el-get-bundle emacs-pug-mode)
-(use-package pug-mode
+(egb-use-package emacs-pug-mode
+  :pkgname pug-mode
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.jade?\\'" . pug-mode))
@@ -414,14 +397,12 @@ Here we're going to make emacs a great coding environment.
 (require 'css-mode)
 (setq css-indent-offset 2)
 
-(el-get-bundle rainbow-mode)
-(use-package rainbow-mode
+(egb-use-package rainbow-mode
   :init
   (dolist (hook '(css-mode-hook html-mode-hook))
     (add-hook hook 'rainbow-mode)))
 
-(el-get-bundle groovy-mode)
-(use-package groovy-mode
+(egb-use-package groovy-mode
   :config
   (progn
     (autoload 'groovy-mode "groovy-mode" "Major mode for editing Groovy code." t)
@@ -429,35 +410,30 @@ Here we're going to make emacs a great coding environment.
     (add-to-list 'auto-mode-alist '("\.gradle$" . groovy-mode))
     (add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))))
 
-(el-get-bundle go-mode)
-(use-package go-mode
+(egb-use-package go-mode
   :config
   (progn
     (autoload 'go-mode "go-mode" "Major mode for editing Go code." t)
     (add-to-list 'auto-mode-alist '("\\.go?\\'" . go-mode))))
 
-(el-get-bundle lua-mode)
-(use-package lua-mode
+(egb-use-package lua-mode
   :config
   (progn
     (add-to-list 'auto-mode-alist '("\\.lua?\\'" . lua-mode))))
 
-(el-get-bundle vimrc-mode)
-(use-package vimrc-mode
+(egb-use-package vimrc-mode
   :config
   (progn
     (add-to-list 'auto-mode-alist '(".vim\\(rc\\)?$" . vimrc-mode))))
 
-(el-get-bundle drag-stuff)
-(use-package drag-stuff
+(egb-use-package drag-stuff
   :config
   (progn
     (drag-stuff-global-mode t)))
 
 ;; http://stackoverflow.com/a/15310340/2741455
 ;; How to set defcustom variable
-(el-get-bundle linum-relative)
-(use-package linum-relative
+(egb-use-package linum-relative
   :config
   (progn
     (setq linum-relative-format "%3s ")
@@ -465,13 +441,11 @@ Here we're going to make emacs a great coding environment.
 
 (cond ((executable-find "pt")
         (progn
-          (el-get-bundle pt)
-          (use-package pt) ;; https://github.com/bling/pt.el
+          (egb-use-package pt) ;; https://github.com/bling/pt.el
           (defalias 'my-search-util 'projectile-pt)))  ;; seems pretty fast (faster than ag? maybe...dunno), but it's written in Go!
       ((executable-find "ag")
         (progn
-          (el-get-bundle ag) ;; https://github.com/Wilfred/ag.el
-          (use-package ag) ;; https://github.com/Wilfred/ag.el
+          (egb-use-package ag) ;; https://github.com/Wilfred/ag.el
           (defalias 'my-search-util 'projectile-ag)))  ;; on the website, it said faster than ack
       ((executable-find "grep")
         (progn
@@ -496,13 +470,11 @@ Here we're going to make emacs a great coding environment.
 Lets add the awesome vim/modal editing keybindings. So much more fluid to edit with than emacs own.
 
 #+BEGIN_SRC emacs-lisp
-(el-get-bundle goto-chg)
-(use-package goto-chg)
+(egb-use-package goto-chg)
 ;; evil mode setup ;;
 (setq evil-want-C-w-in-emacs-state t)
 (setq evil-default-cursor t)
-(el-get-bundle evil)
-(use-package evil
+(egb-use-package evil
   :config
   (progn
     (evil-mode 1)
@@ -560,22 +532,13 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
       (next-line 10)
       (evil-scroll-line-down 10)))
 
-    ;;(el-get-bundle key-chord)
-    ;;(use-package key-chord
-    ;;  :config
-    ;;  (progn
-    ;;    (key-chord-mode 1)
-    ;;    (key-chord-define evil-insert-state-map "kj" 'evil-normal-state)))
-
-    (el-get-bundle evil-escape)
-    (use-package evil-escape
+    (egb-use-package evil-escape
       :config
       (progn
         (evil-escape-mode)
         (setq-default evil-escape-key-sequence "kj")))
 
-    (el-get-bundle evil-leader)
-    (use-package evil-leader
+    (egb-use-package evil-leader
       :config
       (progn
         (global-evil-leader-mode t)
@@ -596,8 +559,8 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
           "<down>" 'drag-stuff-down
           "<up>" 'drag-stuff-up)))
 
-    (el-get-bundle emacs-neotree)
-    (use-package neotree
+    (egb-use-package emacs-neotree
+      :pkgname neotree
       :config
       (progn
         (setq-default neo-show-hidden-files t)
@@ -659,41 +622,35 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
                       "gg" 'evil-goto-first-line)
                     neotree-mode-map))))
 
-    (el-get-bundle evil-nerd-commenter)
-    (use-package evil-nerd-commenter
+    (egb-use-package evil-nerd-commenter
       :commands (evilnc-comment-or-uncomment-lines)
       :config
       (progn
         (evilnc-default-hotkeys)))
 
-    (el-get-bundle evil-matchit)
-    (use-package evil-matchit
+    (egb-use-package evil-matchit
       :config
       (progn
         (global-evil-matchit-mode 1)))
 
-    (el-get-bundle evil-surround)
-    (use-package evil-surround
+    (egb-use-package evil-surround
       :config
       (progn
         (global-evil-surround-mode 1)))
 
-    (el-get-bundle evil-visualstar)
-    (use-package evil-visualstar
+    (egb-use-package evil-visualstar
       :config
       (progn
         (global-evil-visualstar-mode)))
 
-    (el-get-bundle magit)
-    (use-package magit
+    (egb-use-package magit
       :defer t
       :config
       (progn
         ;; http://whattheemacsd.com/setup-magit.el-01.html
         ;; http://www.lunaryorn.com/posts/fullscreen-magit-status.html
         (magit-auto-revert-mode 0) ;; magit auto revert mode seemed to take some time on startup
-        (el-get-bundle evil-magit)
-        (use-package evil-magit
+        (egb-use-package evil-magit
           ;; http://cachestocaches.com/2016/12/vim-within-emacs-anecdotal-guide/
           ;; https://github.com/gjstein/emacs.d/blob/cb126260d30246dc832d6e456b06676f517b35b0/config/init-40-coding-gen.el#L90-L111
           :config
@@ -704,7 +661,7 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
           ;;   [escape] 'with-editor-cancel)
           ;; (evil-define-key 'normal git-rebase-mode-map
           ;;   "l" 'git-rebase-show-commit)
-	  )
+          )
         (defadvice magit-status (around magit-fullscreen activate)
           (window-configuration-to-register :magit-fullscreen)
           ad-do-it
@@ -715,25 +672,13 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
           (kill-buffer)
           (jump-to-register :magit-fullscreen))))
 
-     ;; (use-package evil-tabs
-     ;;   :config
-     ;;   (progn
-     ;;     (global-evil-tabs-mode t)))
-
-     ;;(use-package evil-quickscope
-     ;;  :config
-     ;;  (progn
-     ;;    (global-evil-quickscope-mode 1)))
-
-    (el-get-bundle evil-numbers)
-    (use-package evil-numbers
+    (egb-use-package evil-numbers
       :config
       (progn
         (define-key evil-normal-state-map (kbd "C-<right>") 'evil-numbers/inc-at-pt)
         (define-key evil-normal-state-map (kbd "C-<left>") 'evil-numbers/dec-at-pt)))
 
-    (el-get-bundle spaceline)
-    (use-package spaceline
+    (egb-use-package spaceline
       :config
       (progn
         (require 'spaceline-config)
@@ -748,16 +693,4 @@ Here are some last minute touches. Run silent package upgrader and elpa-mirror t
 
 #+BEGIN_SRC emacs-lisp
 
-;; https://github.com/kiwanami/emacs-deferred
-;; (deferred:$
-;;   (deferred:wait (* 30 1000)) ;; 30 sec
-;;   (deferred:nextc it
-;;     (lambda ()
-;;       (spu-package-upgrade)
-;;       (message "[SPU] Emacs Silent Package Upgrader completed." )))
-;;   (deferred:wait (* 120 1000)) ;; 120 sec
-;;   (deferred:nextc it
-;;     (lambda ()
-;;       (elpamr-create-mirror-for-installed)
-;;       (message "Elpa packages backed up to ~/.emacs.d/.backup-elpa/" ))))
 #+END_SRC
