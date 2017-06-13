@@ -117,9 +117,13 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
     (setq spacer-readme (s-concat (f-full user-emacs-directory) "README.md" )) ;; => /home/path/to/file
     (setq spacer-recentf (s-concat "(setq recentf-list '(\"" spacer-readme "\")) (setq recentf-filter-changer-current 'nil)"))
     (f-write spacer-recentf 'utf-8 recentf-save-file)))
-(setq recentf-max-menu-items 10)
-(setq recentf-auto-cleanup 'never)
-(recentf-mode 1)
+(use-package recentf
+  :defer t
+  :config
+  (progn
+    (recentf-mode 1)
+    (setq recentf-auto-cleanup 'never)
+    (setq recentf-max-menu-items 10)))
 
 (setq-default tab-width 2)
 (setq-default indent-tabs-mode nil) ;; seems to affect autocomplete modes
@@ -260,33 +264,36 @@ Lets make emacs look and behave better.
 Gotta navigate around emacs more efficiently, and this is how.
 
 #+BEGIN_SRC emacs-lisp
-(use-package general)
-(general-define-key
-  :states '(normal motion emacs)
-  :prefix ","
+(egb-use-package general
+  :config
+  (progn
+    ;;(general-evil-setup)
+    (general-define-key
+      :states '(normal motion emacs)
+      :prefix ","
 
-  ;;  Avoiding CTRL
-  "w" (general-simulate-keys "C-w")
-  "x" (general-simulate-keys "C-x")
-  "c" (general-simulate-keys "C-c")
-  "h" (general-simulate-keys "C-h")
+      ;;  Avoiding CTRL
+      "w" (general-simulate-keys "C-w")
+      "x" (general-simulate-keys "C-x")
+      "c" (general-simulate-keys "C-c")
+      "h" (general-simulate-keys "C-h")
 
-  ;; The Rest
+      ;; The Rest
 
-  "a" 'ace-jump-mode
-  "b" 'ivy-switch-buffer
-  "e" 'eval-region
-  "f" 'my-search-util
-  "j" 'prettier
-  "l" 'linum-relative-toggle
-  "k"  'kill-other-buffers
-  "nf" 'neotree-find
-  "nt" 'neotree-toggle
-  "p" 'projectile-find-file
-  "r" 'counsel-recentf
-  "/" 'evilnc-comment-or-uncomment-lines
-  "<down>" 'drag-stuff-down
-  "<up>" 'drag-stuff-up)
+      "a" 'ace-jump-mode
+      "b" 'ivy-switch-buffer
+      "e" 'eval-region
+      "f" 'my-search-util
+      "j" 'prettier
+      "l" 'linum-relative-toggle
+      "k"  'kill-other-buffers
+      "nf" 'neotree-find
+      "nt" 'neotree-toggle
+      "p" 'projectile-find-file
+      "r" 'counsel-recentf
+      "/" 'evilnc-comment-or-uncomment-lines
+      "<down>" 'drag-stuff-down
+      "<up>" 'drag-stuff-up)))
 ;;(use-package general
 ;;  :config
 ;;  (setq general-default-prefix "<SPC>")
