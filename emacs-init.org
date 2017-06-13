@@ -353,6 +353,8 @@ Gotta navigate around emacs more efficiently, and this is how.
 
 (egb-use-package emacs-neotree
   :pkgname neotree
+  ;; first loadup requires some evil features, there defer loading neotree
+  :defer t
   :config
   (progn
     (setq-default neo-show-hidden-files t)
