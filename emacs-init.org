@@ -24,14 +24,14 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (el-get 'sync)
 
 ;; https://stackoverflow.com/questions/23165158/how-do-i-install-melpa-packages-via-el-get
-(require 'package)
-(setq package-archives nil)
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("gnu" . "http://elpa.gnu.org/packages/")))
-(eval-when-compile (package-initialize))
-(require 'el-get-elpa)
-(unless (file-directory-p el-get-recipe-path-elpa)
-  (el-get-elpa-build-local-recipes))
+;;(require 'package)
+;;(setq package-archives nil)
+;;(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+;;                         ("gnu" . "http://elpa.gnu.org/packages/")))
+;;(eval-when-compile (package-initialize))
+;;(require 'el-get-elpa)
+;;(unless (file-directory-p el-get-recipe-path-elpa)
+;;  (el-get-elpa-build-local-recipes))
 
 (el-get-bundle use-package)
 (el-get-bundle egb-use-package)
@@ -117,13 +117,9 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
     (setq spacer-readme (s-concat (f-full user-emacs-directory) "README.md" )) ;; => /home/path/to/file
     (setq spacer-recentf (s-concat "(setq recentf-list '(\"" spacer-readme "\")) (setq recentf-filter-changer-current 'nil)"))
     (f-write spacer-recentf 'utf-8 recentf-save-file)))
-(use-package recentf
-  :defer t
-  :config
-  (progn
-    (recentf-mode 1)
-    (setq recentf-auto-cleanup 'never)
-    (setq recentf-max-menu-items 10)))
+;;(setq recentf-max-menu-items 10)
+;;(setq recentf-auto-cleanup 'never)
+;;(recentf-mode 1)
 
 (setq-default tab-width 2)
 (setq-default indent-tabs-mode nil) ;; seems to affect autocomplete modes
@@ -309,6 +305,7 @@ Gotta navigate around emacs more efficiently, and this is how.
 (egb-use-package swiper
   :features ivy
   :pkgname ivy
+  :defer t
   ;;:ensure smex ;; http://emacs.stackexchange.com/questions/17710/use-package-with-config-to-set-variables
   :config
   (progn
