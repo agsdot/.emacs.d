@@ -24,14 +24,14 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (el-get 'sync)
 
 ;; https://stackoverflow.com/questions/23165158/how-do-i-install-melpa-packages-via-el-get
-;;(require 'package)
-;;(setq package-archives nil)
-;;(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-;;                         ("gnu" . "http://elpa.gnu.org/packages/")))
-;;(eval-when-compile (package-initialize))
-;;(require 'el-get-elpa)
-;;(unless (file-directory-p el-get-recipe-path-elpa)
-;;  (el-get-elpa-build-local-recipes))
+(require 'package)
+(setq package-archives nil)
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                         ("gnu" . "http://elpa.gnu.org/packages/")))
+(eval-when-compile (package-initialize))
+(require 'el-get-elpa)
+(unless (file-directory-p el-get-recipe-path-elpa)
+  (el-get-elpa-build-local-recipes))
 
 (el-get-bundle use-package)
 (el-get-bundle egb-use-package)
