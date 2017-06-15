@@ -275,10 +275,10 @@ Gotta navigate around emacs more efficiently, and this is how.
       :states '(normal motion emacs)
       :prefix "<SPC>"
       ;;  Avoiding CTRL
-      "w" (general-simulate-keys "C-w")
-      "x" (general-simulate-keys "C-x")
-      "c" (general-simulate-keys "C-c")
-      "h" (general-simulate-keys "C-h")
+      ;;"w" (general-simulate-keys "C-w")
+      ;;"x" (general-simulate-keys "C-x")
+      ;;"c" (general-simulate-keys "C-c")
+      ;;"h" (general-simulate-keys "C-h")
       ;; The Rest
       "a"  'ace-jump-mode
       "b"  'ivy-switch-buffer
@@ -288,14 +288,20 @@ Gotta navigate around emacs more efficiently, and this is how.
       "l"  'linum-relative-toggle
       "k"  'kill-other-buffers
       "p"  'projectile-find-file
+      "r"  'counsel-recentf
+      "/"  'evilnc-comment-or-uncomment-lines
+
+      "<down>" 'drag-stuff-down
+      "<up>" 'drag-stuff-up
+
+      "qa" 'evil-quit-all
       "qs" 'evil-save-and-close
       "qq" 'evil-quit
-      "r"  'counsel-recentf
-      ;;"ww" 'evil-write
-      ;;"wq" 'evil-save-and-close
-      "/"  'evilnc-comment-or-uncomment-lines
-      "<down>" 'drag-stuff-down
-      "<up>" 'drag-stuff-up)))
+
+      "wa" 'evil-write-all
+      "ww" 'evil-write
+      "wq" 'evil-save-and-close
+      )))
 ;;(use-package general
 ;;  :config
 ;;  (setq general-default-prefix "<SPC>")
