@@ -10,7 +10,7 @@ Lets make this organized and documented org-mode style
 Here lets do the preliminary setup and put in some good defaults for emacs, including setting some system wide variables.
 
 #+BEGIN_SRC emacs-lisp
-
+(setq gc-cons-threshold 100000000)
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 (unless (require 'el-get nil 'noerror)
@@ -35,6 +35,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 
 (el-get-bundle use-package)
 (el-get-bundle egb-use-package)
+(setq use-package-always-defer t)
 (use-package egb-use-package)
 
 (let ((default-directory "~/.emacs.d/custom/"))
@@ -64,6 +65,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 ;;(use-package esup)
 
 (egb-use-package f
+  :demand t
   :config
   (progn
     (unless (f-exists? dotemacs-cache-directory)
@@ -117,9 +119,6 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
     (setq spacer-readme (s-concat (f-full user-emacs-directory) "README.md" )) ;; => /home/path/to/file
     (setq spacer-recentf (s-concat "(setq recentf-list '(\"" spacer-readme "\")) (setq recentf-filter-changer-current 'nil)"))
     (f-write spacer-recentf 'utf-8 recentf-save-file)))
-(setq recentf-max-menu-items 10)
-(setq recentf-auto-cleanup 'never)
-(recentf-mode 1)
 
 (setq-default tab-width 2)
 (setq-default indent-tabs-mode nil) ;; seems to affect autocomplete modes
@@ -204,6 +203,13 @@ Lets make emacs look and behave better.
       '((space-mark 32 [183] [46])
         (tab-mark 9 [9655 9] [92 9])))))
 
+(egb-use-package spaceline
+  :demand t
+  :config
+  (progn
+    (require 'spaceline-config)
+    (spaceline-spacemacs-theme)))
+
 ;;(egb-use-package ethan-wspace)
 
 ;;(egb-use-package apropospriate-theme)
@@ -254,16 +260,69 @@ Lets make emacs look and behave better.
 Gotta navigate around emacs more efficiently, and this is how.
 
 #+BEGIN_SRC emacs-lisp
+(egb-use-package general
+  :config
+  (progn
+    ;;(general-evil-setup)
+    (general-define-key
+      :states '(normal motion emacs)
+      :prefix ","
+      "/" 'evilnc-comment-or-uncomment-lines
+      "f" 'my-search-util
+      "nf" 'neotree-find
+      "nt" 'neotree-toggle)
+    (general-define-key
+      :states '(normal motion emacs)
+      :prefix "<SPC>"
+      ;;  Avoiding CTRL
+      ;;"w" (general-simulate-keys "C-w")
+      ;;"x" (general-simulate-keys "C-x")
+      ;;"c" (general-simulate-keys "C-c")
+      ;;"h" (general-simulate-keys "C-h")
+      ;; The Rest
+      "a"      'ace-jump-mode
+      "b"      'ivy-switch-buffer
+      "e"      'eval-region
+      "fs"     'evil-write
+      "j"      'prettier
+      "l"      'linum-relative-toggle
+      "k"      'kill-other-buffers
+      "p"      'projectile-find-file
+      "r"      'counsel-recentf
 
-(egb-use-package smex)
+      "qa"     'evil-quit-all
+      "qs"     'evil-save-and-close
+      "qq"     'evil-quit
+
+      "wa"     'evil-write-all
+      "ww"     'evil-write
+      "wq"     'evil-save-and-close
+
+      "<down>" 'drag-stuff-down
+      "<up>"   'drag-stuff-up
+      "TAB"    'org-cycle
+      ";"      'counsel-M-x
+      "/"      'evilnc-comment-or-uncomment-lines
+      )))
+;;(use-package general
+;;  :config
+;;  (setq general-default-prefix "<SPC>")
+;;  (general-evil-setup)
+;;  (general-nmap
+;;    "e" 'eval-region
+;;    "f" 'my-search-util
+;;    "k" 'kill-other-buffers
+;;  ))
+
+;; http://emacs.stackexchange.com/questions/17710/use-package-with-config-to-set-variables
+(setq smex-save-file (concat dotemacs-cache-directory "smex-items")) ;; retain smex for the sort by most recent / frequently used commands
+(egb-use-package smex :demand t)
 
 (egb-use-package swiper
   :features ivy
   :pkgname ivy
-  ;;:ensure smex ;; http://emacs.stackexchange.com/questions/17710/use-package-with-config-to-set-variables
   :config
   (progn
-    (setq smex-save-file (concat dotemacs-cache-directory "smex-items")) ;; retain smex for the sort by most recent / frequently used commands
     (ivy-mode 1)
     ;; https://github.com/abo-abo/swiper/issues/164
     (define-key
@@ -297,12 +356,74 @@ Gotta navigate around emacs more efficiently, and this is how.
     (setq projectile-require-project-root nil)))
 
 (egb-use-package counsel-projectile
-  :defer t
   :config
   (progn
     (counsel-projectile-on)))
 
+(egb-use-package emacs-neotree
+  :pkgname neotree
+  :config
+  (progn
+    (setq-default neo-show-hidden-files t)
+    ;; from https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-neotree.el
+    (setq neo-theme 'nerd) ; 'classic, 'nerd, 'ascii, 'arrow
+    (setq neo-vc-integration '(face char))
+    ;; Patch to fix vc integration
+    (defun neo-vc-for-node (node)
+      (let* ((backend (vc-backend node))
+             (vc-state (when backend (vc-state node backend))))
+        ;; (message "%s %s %s" node backend vc-state)
+        (cons (cdr (assoc vc-state neo-vc-state-char-alist))
+              (cl-case vc-state
+                (up-to-date       neo-vc-up-to-date-face)
+                (edited           neo-vc-edited-face)
+                (needs-update     neo-vc-needs-update-face)
+                (needs-merge      neo-vc-needs-merge-face)
+                (unlocked-changes neo-vc-unlocked-changes-face)
+                (added            neo-vc-added-face)
+                (removed          neo-vc-removed-face)
+                (conflict         neo-vc-conflict-face)
+                (missing          neo-vc-missing-face)
+                (ignored          neo-vc-ignored-face)
+                (unregistered     neo-vc-unregistered-face)
+                (user             neo-vc-user-face)
+                (t                neo-vc-default-face)))))
+    ;; from https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-neotree.el
+
+    ;; from https://github.com/andrewmcveigh/emacs.d
+    ;; get keybindings to work better in neotree with evil
+    (defun neotree-copy-file ()
+      (interactive)
+      (let* ((current-path (neo-buffer--get-filename-current-line))
+             (msg (format "Copy [%s] to: "
+                          (neo-path--file-short-name current-path)))
+             (to-path (read-file-name msg (file-name-directory current-path))))
+        (dired-copy-file current-path to-path t))
+      (neo-buffer--refresh t))
+    (define-minor-mode neotree-evil
+      "Use NERDTree bindings on neotree."
+      :lighter " NT"
+      :keymap (progn
+                (evil-make-overriding-map neotree-mode-map 'normal t)
+                (evil-define-key 'normal neotree-mode-map
+                  "C" 'neotree-change-root
+                  "U" 'neotree-select-up-node
+                  "r" 'neotree-refresh
+                  "o" 'neotree-enter
+                  (kbd "<return>") 'neotree-enter
+                  "i" 'neotree-enter-horizontal-split
+                  "s" 'neotree-enter-vertical-split
+                  "n" 'evil-search-next
+                  "N" 'evil-search-previous
+                  "ma" 'neotree-create-node
+                  "mc" 'neotree-copy-file
+                  "md" 'neotree-delete-node
+                  "mm" 'neotree-rename-node
+                  "gg" 'evil-goto-first-line)
+                neotree-mode-map))))
+
 (egb-use-package dashboard
+  :demand t
   :config
   (progn
     (setq show-trailing-whitespace nil)
@@ -324,7 +445,101 @@ Gotta navigate around emacs more efficiently, and this is how.
 (setq server-visit-hook (quote (save-place-find-file-hook)))
 ;; rename this save file....
 (setq save-place-file "~/.emacs.d/.cache/saved-places")
+#+END_SRC
 
+** init-evil
+Lets add the awesome vim/modal editing keybindings. So much more fluid to edit with than emacs own.
+
+#+BEGIN_SRC emacs-lisp
+(egb-use-package goto-chg)
+;; evil mode setup ;;
+(setq evil-want-C-w-in-emacs-state t)
+(setq evil-default-cursor t)
+(egb-use-package evil
+  :config
+  (progn
+    (evil-mode 1)
+    ;; https://stackoverflow.com/questions/14302171/ctrl-u-in-emacs-when-using-evil-key-bindings
+    (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
+    (define-key evil-visual-state-map (kbd "C-u") 'evil-scroll-up)
+    (define-key evil-normal-state-map ";" 'evil-ex)
+    (define-key evil-normal-state-map ":" 'counsel-M-x)
+
+    ;; for use in counsel-M-x / smex
+    (defalias 'w 'evil-write)
+    (defalias 'wq 'evil-save-and-close)
+    (defalias 'wq! 'evil-save-and-close)
+    (defalias 'q 'evil-quit)
+    (defalias 'q! 'evil-quit)
+    (defalias 'gst 'magit-status)
+    (defalias 'st 'magit-status)
+
+    ;;(evil-set-initial-state 'magit-status-mode 'emacs)
+    ;;(evil-set-initial-state 'magit-log-edit-mode 'emacs)
+    (evil-set-initial-state 'dashboard-mode 'emacs)
+
+    (define-key evil-normal-state-map (kbd "C-<down>") 'drag-stuff-down)
+    (define-key evil-normal-state-map (kbd "C-<up>") 'drag-stuff-up)
+
+    (define-key evil-motion-state-map "j" 'evil-next-visual-line)
+    (define-key evil-motion-state-map "k" 'evil-previous-visual-line)
+
+    ;; https://stackoverflow.com/questions/20882935/how-to-move-between-visual-lines-and-move-past-newline-in-evil-mode
+    ;; Make horizontal movement cross lines
+    (setq-default evil-cross-lines t)
+
+    (define-key evil-normal-state-map (kbd "C-w ]") 'evil-window-rotate-downwards)
+    (define-key evil-normal-state-map (kbd "C-w [") 'evil-window-rotate-upwards)
+
+    (define-key evil-normal-state-map (kbd "C-h")   'evil-window-left)
+    (define-key evil-normal-state-map (kbd "C-j")   'evil-window-down)
+    (define-key evil-normal-state-map (kbd "C-k")   'evil-window-up)
+    (define-key evil-normal-state-map (kbd "C-l")   'evil-window-right)
+
+    (evil-ex-define-cmd "Q"  'evil-quit)
+    (evil-ex-define-cmd "Qa" 'evil-quit-all)
+    (evil-ex-define-cmd "QA" 'evil-quit-all)
+
+    ;; setup extra keybindings ;;
+    ;; Bind DEL and = keys to scrolling up and down
+    ;; https://stackoverflow.com/questions/8483182/evil-mode-best-practice
+    (define-key evil-normal-state-map (kbd "DEL") (lambda ()
+      (interactive)
+      (previous-line 10)
+      (evil-scroll-line-up 10)))
+
+    (define-key evil-normal-state-map (kbd "=") (lambda ()
+      (interactive)
+      (next-line 10)
+      (evil-scroll-line-down 10)))
+  ))
+
+(egb-use-package evil-escape
+  :config
+  (progn
+    (evil-escape-mode)
+    (setq-default evil-escape-key-sequence "kj")))
+
+(egb-use-package evil-matchit
+  :config
+  (progn
+    (global-evil-matchit-mode 1)))
+
+(egb-use-package evil-surround
+  :config
+  (progn
+    (global-evil-surround-mode 1)))
+
+(egb-use-package evil-visualstar
+  :config
+  (progn
+    (global-evil-visualstar-mode)))
+
+(egb-use-package evil-numbers
+  :config
+  (progn
+    (define-key evil-normal-state-map (kbd "C-<right>") 'evil-numbers/inc-at-pt)
+    (define-key evil-normal-state-map (kbd "C-<left>") 'evil-numbers/dec-at-pt)))
 #+END_SRC
 
 ** init-coding
@@ -341,6 +556,41 @@ Here we're going to make emacs a great coding environment.
     (global-git-gutter-mode 1)))
 
 (egb-use-package git-timemachine)
+
+(egb-use-package magit
+  :config
+  (progn
+    ;; http://whattheemacsd.com/setup-magit.el-01.html
+    ;; http://www.lunaryorn.com/posts/fullscreen-magit-status.html
+    (magit-auto-revert-mode 0) ;; magit auto revert mode seemed to take some time on startup
+    (egb-use-package evil-magit
+      :demand t
+      ;; http://cachestocaches.com/2016/12/vim-within-emacs-anecdotal-guide/
+      ;; https://github.com/gjstein/emacs.d/blob/cb126260d30246dc832d6e456b06676f517b35b0/config/init-40-coding-gen.el#L90-L111
+      :config
+      ;; Default commit editor opening in insert mode
+      (add-hook 'with-editor-mode-hook 'evil-insert-state)
+      ;; (evil-define-key 'normal with-editor-mode-map
+      ;;   (kbd "RET") 'with-editor-finish
+      ;;   [escape] 'with-editor-cancel)
+      ;; (evil-define-key 'normal git-rebase-mode-map
+      ;;   "l" 'git-rebase-show-commit)
+      )
+    (defadvice magit-status (around magit-fullscreen activate)
+      (window-configuration-to-register :magit-fullscreen)
+      ad-do-it
+      (delete-other-windows))
+    (defun magit-quit-session ()
+      "Restores the previous window configuration and kills the magit buffer"
+      (interactive)
+      (kill-buffer)
+      (jump-to-register :magit-fullscreen))))
+
+(egb-use-package evil-nerd-commenter
+  :commands (evilnc-comment-or-uncomment-lines)
+  :config
+  (progn
+    (evilnc-default-hotkeys)))
 
 (egb-use-package editorconfig
   :config
@@ -463,228 +713,6 @@ Here we're going to make emacs a great coding environment.
       :action (lambda (input)
         (browse-url (concat "http://cheat.sh/" input "?T&q")))
       :caller 'ejmr-search-cheat-sh))
-
-#+END_SRC
-
-** init-evil
-Lets add the awesome vim/modal editing keybindings. So much more fluid to edit with than emacs own.
-
-#+BEGIN_SRC emacs-lisp
-(egb-use-package goto-chg)
-;; evil mode setup ;;
-(setq evil-want-C-w-in-emacs-state t)
-(setq evil-default-cursor t)
-(egb-use-package evil
-  :config
-  (progn
-    (evil-mode 1)
-    ;; https://stackoverflow.com/questions/14302171/ctrl-u-in-emacs-when-using-evil-key-bindings
-    (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
-    (define-key evil-visual-state-map (kbd "C-u") 'evil-scroll-up)
-    (define-key evil-normal-state-map ";" 'evil-ex)
-    (define-key evil-normal-state-map ":" 'counsel-M-x)
-
-    ;; for use in counsel-M-x / smex
-    (defalias 'w 'evil-write)
-    (defalias 'wq 'evil-save-and-close)
-    (defalias 'wq! 'evil-save-and-close)
-    (defalias 'q 'evil-quit)
-    (defalias 'q! 'evil-quit)
-    (defalias 'gst 'magit-status)
-    (defalias 'st 'magit-status)
-
-    ;;(evil-set-initial-state 'magit-status-mode 'emacs)
-    ;;(evil-set-initial-state 'magit-log-edit-mode 'emacs)
-    (evil-set-initial-state 'dashboard-mode 'emacs)
-
-    (define-key evil-normal-state-map (kbd "C-<down>") 'drag-stuff-down)
-    (define-key evil-normal-state-map (kbd "C-<up>") 'drag-stuff-up)
-
-    (define-key evil-motion-state-map "j" 'evil-next-visual-line)
-    (define-key evil-motion-state-map "k" 'evil-previous-visual-line)
-
-    ;; https://stackoverflow.com/questions/20882935/how-to-move-between-visual-lines-and-move-past-newline-in-evil-mode
-    ;; Make horizontal movement cross lines
-    (setq-default evil-cross-lines t)
-
-    (define-key evil-normal-state-map (kbd "C-w ]") 'evil-window-rotate-downwards)
-    (define-key evil-normal-state-map (kbd "C-w [") 'evil-window-rotate-upwards)
-
-    (define-key evil-normal-state-map (kbd "C-h")   'evil-window-left)
-    (define-key evil-normal-state-map (kbd "C-j")   'evil-window-down)
-    (define-key evil-normal-state-map (kbd "C-k")   'evil-window-up)
-    (define-key evil-normal-state-map (kbd "C-l")   'evil-window-right)
-
-    (evil-ex-define-cmd "Q"  'evil-quit)
-    (evil-ex-define-cmd "Qa" 'evil-quit-all)
-    (evil-ex-define-cmd "QA" 'evil-quit-all)
-
-    ;; setup extra keybindings ;;
-    ;; Bind DEL and = keys to scrolling up and down
-    ;; https://stackoverflow.com/questions/8483182/evil-mode-best-practice
-    (define-key evil-normal-state-map (kbd "DEL") (lambda ()
-      (interactive)
-      (previous-line 10)
-      (evil-scroll-line-up 10)))
-
-    (define-key evil-normal-state-map (kbd "=") (lambda ()
-      (interactive)
-      (next-line 10)
-      (evil-scroll-line-down 10)))
-
-    (egb-use-package evil-escape
-      :config
-      (progn
-        (evil-escape-mode)
-        (setq-default evil-escape-key-sequence "kj")))
-
-    (egb-use-package evil-leader
-      :config
-      (progn
-        (global-evil-leader-mode t)
-        (evil-leader/set-leader ",")
-        (evil-leader/set-key
-          "a" 'ace-jump-mode
-          "b" 'ivy-switch-buffer
-          "e" 'eval-region
-          "f" 'my-search-util
-          "j" 'prettier
-          "l" 'linum-relative-toggle
-          "k"  'kill-other-buffers
-          "nf" 'neotree-find
-          "nt" 'neotree-toggle
-          "p" 'projectile-find-file
-          "r" 'counsel-recentf
-          "/" 'evilnc-comment-or-uncomment-lines
-          "<down>" 'drag-stuff-down
-          "<up>" 'drag-stuff-up)))
-
-    (egb-use-package emacs-neotree
-      :pkgname neotree
-      :config
-      (progn
-        (setq-default neo-show-hidden-files t)
-
-        ;; from https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-neotree.el
-        (setq neo-theme 'nerd) ; 'classic, 'nerd, 'ascii, 'arrow
-        (setq neo-vc-integration '(face char))
-        ;; Patch to fix vc integration
-        (defun neo-vc-for-node (node)
-          (let* ((backend (vc-backend node))
-                 (vc-state (when backend (vc-state node backend))))
-            ;; (message "%s %s %s" node backend vc-state)
-            (cons (cdr (assoc vc-state neo-vc-state-char-alist))
-                  (cl-case vc-state
-                    (up-to-date       neo-vc-up-to-date-face)
-                    (edited           neo-vc-edited-face)
-                    (needs-update     neo-vc-needs-update-face)
-                    (needs-merge      neo-vc-needs-merge-face)
-                    (unlocked-changes neo-vc-unlocked-changes-face)
-                    (added            neo-vc-added-face)
-                    (removed          neo-vc-removed-face)
-                    (conflict         neo-vc-conflict-face)
-                    (missing          neo-vc-missing-face)
-                    (ignored          neo-vc-ignored-face)
-                    (unregistered     neo-vc-unregistered-face)
-                    (user             neo-vc-user-face)
-                    (t                neo-vc-default-face)))))
-        ;; from https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-neotree.el
-
-        ;; from https://github.com/andrewmcveigh/emacs.d
-        ;; get keybindings to work better in neotree with evil
-        (defun neotree-copy-file ()
-          (interactive)
-          (let* ((current-path (neo-buffer--get-filename-current-line))
-                 (msg (format "Copy [%s] to: "
-                              (neo-path--file-short-name current-path)))
-                 (to-path (read-file-name msg (file-name-directory current-path))))
-            (dired-copy-file current-path to-path t))
-          (neo-buffer--refresh t))
-        (define-minor-mode neotree-evil
-          "Use NERDTree bindings on neotree."
-          :lighter " NT"
-          :keymap (progn
-                    (evil-make-overriding-map neotree-mode-map 'normal t)
-                    (evil-define-key 'normal neotree-mode-map
-                      "C" 'neotree-change-root
-                      "U" 'neotree-select-up-node
-                      "r" 'neotree-refresh
-                      "o" 'neotree-enter
-                      (kbd "<return>") 'neotree-enter
-                      "i" 'neotree-enter-horizontal-split
-                      "s" 'neotree-enter-vertical-split
-                      "n" 'evil-search-next
-                      "N" 'evil-search-previous
-                      "ma" 'neotree-create-node
-                      "mc" 'neotree-copy-file
-                      "md" 'neotree-delete-node
-                      "mm" 'neotree-rename-node
-                      "gg" 'evil-goto-first-line)
-                    neotree-mode-map))))
-
-    (egb-use-package evil-nerd-commenter
-      :commands (evilnc-comment-or-uncomment-lines)
-      :config
-      (progn
-        (evilnc-default-hotkeys)))
-
-    (egb-use-package evil-matchit
-      :config
-      (progn
-        (global-evil-matchit-mode 1)))
-
-    (egb-use-package evil-surround
-      :config
-      (progn
-        (global-evil-surround-mode 1)))
-
-    (egb-use-package evil-visualstar
-      :config
-      (progn
-        (global-evil-visualstar-mode)))
-
-    (egb-use-package magit
-      :defer t
-      :config
-      (progn
-        ;; http://whattheemacsd.com/setup-magit.el-01.html
-        ;; http://www.lunaryorn.com/posts/fullscreen-magit-status.html
-        (magit-auto-revert-mode 0) ;; magit auto revert mode seemed to take some time on startup
-        (egb-use-package evil-magit
-          ;; http://cachestocaches.com/2016/12/vim-within-emacs-anecdotal-guide/
-          ;; https://github.com/gjstein/emacs.d/blob/cb126260d30246dc832d6e456b06676f517b35b0/config/init-40-coding-gen.el#L90-L111
-          :config
-          ;; Default commit editor opening in insert mode
-          (add-hook 'with-editor-mode-hook 'evil-insert-state)
-          ;; (evil-define-key 'normal with-editor-mode-map
-          ;;   (kbd "RET") 'with-editor-finish
-          ;;   [escape] 'with-editor-cancel)
-          ;; (evil-define-key 'normal git-rebase-mode-map
-          ;;   "l" 'git-rebase-show-commit)
-          )
-        (defadvice magit-status (around magit-fullscreen activate)
-          (window-configuration-to-register :magit-fullscreen)
-          ad-do-it
-          (delete-other-windows))
-        (defun magit-quit-session ()
-          "Restores the previous window configuration and kills the magit buffer"
-          (interactive)
-          (kill-buffer)
-          (jump-to-register :magit-fullscreen))))
-
-    (egb-use-package evil-numbers
-      :config
-      (progn
-        (define-key evil-normal-state-map (kbd "C-<right>") 'evil-numbers/inc-at-pt)
-        (define-key evil-normal-state-map (kbd "C-<left>") 'evil-numbers/dec-at-pt)))
-
-    (egb-use-package spaceline
-      :config
-      (progn
-        (require 'spaceline-config)
-        (spaceline-spacemacs-theme)))
-
-))
 
 #+END_SRC
 
