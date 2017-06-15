@@ -35,6 +35,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 
 (el-get-bundle use-package)
 (el-get-bundle egb-use-package)
+(setq use-package-always-defer t)
 (use-package egb-use-package)
 
 (let ((default-directory "~/.emacs.d/custom/"))
@@ -64,6 +65,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 ;;(use-package esup)
 
 (egb-use-package f
+  :demand t
   :config
   (progn
     (unless (f-exists? dotemacs-cache-directory)
@@ -205,6 +207,7 @@ Lets make emacs look and behave better.
         (tab-mark 9 [9655 9] [92 9])))))
 
 (egb-use-package spaceline
+  :demand t
   :config
   (progn
     (require 'spaceline-config)
@@ -280,28 +283,29 @@ Gotta navigate around emacs more efficiently, and this is how.
       ;;"c" (general-simulate-keys "C-c")
       ;;"h" (general-simulate-keys "C-h")
       ;; The Rest
-      "a"  'ace-jump-mode
-      "b"  'ivy-switch-buffer
-      "e"  'eval-region
-      "fs" 'evil-write
-      "j"  'prettier
-      "l"  'linum-relative-toggle
-      "k"  'kill-other-buffers
-      "p"  'projectile-find-file
-      "r"  'counsel-recentf
-      "/"  'evilnc-comment-or-uncomment-lines
+      "a"      'ace-jump-mode
+      "b"      'ivy-switch-buffer
+      "e"      'eval-region
+      "fs"     'evil-write
+      "j"      'prettier
+      "l"      'linum-relative-toggle
+      "k"      'kill-other-buffers
+      "p"      'projectile-find-file
+      "r"      'counsel-recentf
 
-      "qa" 'evil-quit-all
-      "qs" 'evil-save-and-close
-      "qq" 'evil-quit
+      "qa"     'evil-quit-all
+      "qs"     'evil-save-and-close
+      "qq"     'evil-quit
 
-      "wa" 'evil-write-all
-      "ww" 'evil-write
-      "wq" 'evil-save-and-close
+      "wa"     'evil-write-all
+      "ww"     'evil-write
+      "wq"     'evil-save-and-close
 
       "<down>" 'drag-stuff-down
-      "<up>" 'drag-stuff-up
-      "TAB" 'org-cycle
+      "<up>"   'drag-stuff-up
+      "TAB"    'org-cycle
+      ";"      'counsel-M-x
+      "/"      'evilnc-comment-or-uncomment-lines
       )))
 ;;(use-package general
 ;;  :config
@@ -313,16 +317,15 @@ Gotta navigate around emacs more efficiently, and this is how.
 ;;    "k" 'kill-other-buffers
 ;;  ))
 
-(egb-use-package smex)
+;; http://emacs.stackexchange.com/questions/17710/use-package-with-config-to-set-variables
+(setq smex-save-file (concat dotemacs-cache-directory "smex-items")) ;; retain smex for the sort by most recent / frequently used commands
+(egb-use-package smex :demand t)
 
 (egb-use-package swiper
   :features ivy
   :pkgname ivy
-  :defer t
-  ;;:ensure smex ;; http://emacs.stackexchange.com/questions/17710/use-package-with-config-to-set-variables
   :config
   (progn
-    (setq smex-save-file (concat dotemacs-cache-directory "smex-items")) ;; retain smex for the sort by most recent / frequently used commands
     (ivy-mode 1)
     ;; https://github.com/abo-abo/swiper/issues/164
     (define-key
@@ -356,15 +359,12 @@ Gotta navigate around emacs more efficiently, and this is how.
     (setq projectile-require-project-root nil)))
 
 (egb-use-package counsel-projectile
-  :defer t
   :config
   (progn
     (counsel-projectile-on)))
 
 (egb-use-package emacs-neotree
   :pkgname neotree
-  ;; first loadup requires some evil features, there defer loading neotree
-  :defer t
   :config
   (progn
     (setq-default neo-show-hidden-files t)
@@ -426,6 +426,7 @@ Gotta navigate around emacs more efficiently, and this is how.
                 neotree-mode-map))))
 
 (egb-use-package dashboard
+  :demand t
   :config
   (progn
     (setq show-trailing-whitespace nil)
@@ -560,13 +561,13 @@ Here we're going to make emacs a great coding environment.
 (egb-use-package git-timemachine)
 
 (egb-use-package magit
-  :defer t
   :config
   (progn
     ;; http://whattheemacsd.com/setup-magit.el-01.html
     ;; http://www.lunaryorn.com/posts/fullscreen-magit-status.html
     (magit-auto-revert-mode 0) ;; magit auto revert mode seemed to take some time on startup
     (egb-use-package evil-magit
+      :demand t
       ;; http://cachestocaches.com/2016/12/vim-within-emacs-anecdotal-guide/
       ;; https://github.com/gjstein/emacs.d/blob/cb126260d30246dc832d6e456b06676f517b35b0/config/init-40-coding-gen.el#L90-L111
       :config
