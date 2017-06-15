@@ -291,9 +291,6 @@ Gotta navigate around emacs more efficiently, and this is how.
       "r"  'counsel-recentf
       "/"  'evilnc-comment-or-uncomment-lines
 
-      "<down>" 'drag-stuff-down
-      "<up>" 'drag-stuff-up
-
       "qa" 'evil-quit-all
       "qs" 'evil-save-and-close
       "qq" 'evil-quit
@@ -301,6 +298,10 @@ Gotta navigate around emacs more efficiently, and this is how.
       "wa" 'evil-write-all
       "ww" 'evil-write
       "wq" 'evil-save-and-close
+
+      "<down>" 'drag-stuff-down
+      "<up>" 'drag-stuff-up
+      "TAB" 'org-cycle
       )))
 ;;(use-package general
 ;;  :config
