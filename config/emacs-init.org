@@ -10,7 +10,13 @@ Lets make this organized and documented org-mode style
 Here lets do the preliminary setup and put in some good defaults for emacs, including setting some system wide variables.
 
 #+BEGIN_SRC emacs-lisp
+;; https://emacs.stackexchange.com/questions/2286/what-can-i-do-to-speed-up-my-start-up
 (setq gc-cons-threshold 100000000)
+(add-hook 'emacs-startup-hook 'my/set-gc-threshold)
+(defun my/set-gc-threshold ()
+  "Reset `gc-cons-threshold' to its default value."
+  (setq gc-cons-threshold 800000))
+
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 (unless (require 'el-get nil 'noerror)
@@ -48,8 +54,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 ;; http://stackoverflow.com/questions/1480572/how-to-have-emacs-auto-refresh-all-buffers-when-files-have-changed-on-disk
 (global-auto-revert-mode t)
 
-(defcustom dotemacs-cache-directory (concat user-emacs-directory ".cache/")
-  "The storage location for various persistent files.")
+(setq dotemacs-cache-directory (concat user-emacs-directory ".cache/"))
 
 ;; Backup Files location
 ;; https://github.com/bling/dotemacs/blob/master/config/init-core.el
@@ -141,8 +146,8 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
   "Kill all other buffers."
   ;; http://emacs.stackexchange.com/questions/14509/kill-process-buffer-without-confirmation
   ;; not used yet, but may be useful later
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
   (interactive)
+  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
   ;; http://stackoverflow.com/questions/3417438/closing-all-other-buffers-in-emacs
   (mapc 'kill-buffer
     (delq (current-buffer)
@@ -195,13 +200,11 @@ Lets make emacs look and behave better.
 
 ;; http://stackoverflow.com/questions/34531831/highlighting-trailing-whitespace-in-emacs-without-changing-character
 (setq-default show-trailing-whitespace t)
-(egb-use-package whitespace
-  :config
-  (progn
-    (setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
-    (setq whitespace-display-mappings
-      '((space-mark 32 [183] [46])
-        (tab-mark 9 [9655 9] [92 9])))))
+(setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
+(setq whitespace-display-mappings
+  '((space-mark 32 [183] [46])
+    (tab-mark 9 [9655 9] [92 9])))
+(require 'whitespace)
 
 (egb-use-package spaceline
   :demand t
@@ -253,6 +256,14 @@ Lets make emacs look and behave better.
   :init
   (progn
     (load-theme 'monokai t)))
+
+(egb-use-package base16
+  :disabled
+  :features base16-theme
+  :pkgname base16-theme
+  :demand t
+  :config
+    (load-theme 'base16-eighties t))
 
 #+END_SRC
 
@@ -345,7 +356,7 @@ Gotta navigate around emacs more efficiently, and this is how.
 (egb-use-package projectile
   :config
   (progn
-    (projectile-global-mode 1)
+    (projectile-mode 1)
     ;;https://github.com/lunaryorn/.emacs.d/blob/master/init.el
     ;;(validate-setq projectile-completion-system 'ivy
     ;;  projectile-find-dir-includes-top-level t)
@@ -713,12 +724,35 @@ Here we're going to make emacs a great coding environment.
       :action (lambda (input)
         (browse-url (concat "http://cheat.sh/" input "?T&q")))
       :caller 'ejmr-search-cheat-sh))
-
 #+END_SRC
 
 ** init-last-minute-touches
 Here are some last minute touches. Run silent package upgrader and elpa-mirror towards the end of this init file, because by then use-package will have installed all packages of interest into the ~/.emacs.d/elpa directory. After all packages are there, then is the proper time to backup them.
 
 #+BEGIN_SRC emacs-lisp
+(defun emacs-init-save-hook()
+  (when (eq major-mode 'org-mode)
+    ;;(jl/compile-readme)
+    (funcall (lambda ()
+      (setq byte-compile-warnings '(not nresolved
+                                        free-vars
+                                        callargs
+                                        redefine
+                                        obsolete
+                                        noruntime
+                                        cl-functions
+                                        interactive-only
+                                        ))
+      ;; https://stackoverflow.com/questions/23749267/how-do-i-disable-warnings-at-initialization-in-emacs
+      (setq warning-minimum-level :emergency)
+      ;; https://github.com/bnbeckwith/bnb-emacs
+      (let ((src "~/.emacs.d/config/emacs-init.org")
+            (dst "~/.emacs.d/config/emacs-init.el"))
+        (when (file-newer-than-file-p src dst)
+          (org-babel-tangle-file src dst "emacs-lisp"))
+        (byte-recompile-file dst t 0 nil))))))
+
+;; https://stackoverflow.com/questions/6138029/how-to-add-a-hook-to-only-run-in-a-particular-mode
+(add-hook 'after-save-hook 'emacs-init-save-hook)
 
 #+END_SRC
