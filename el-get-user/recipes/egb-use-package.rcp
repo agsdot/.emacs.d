@@ -1,4 +1,0 @@
-(:name egb-use-package
-       :type github
-       :depends (el-get use-package)
-       :pkgname "agsdot/egb-use-package")

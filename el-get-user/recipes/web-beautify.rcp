@@ -1,3 +1,0 @@
-(:name web-beautify
-       :type github
-       :pkgname "yasuyk/web-beautify")

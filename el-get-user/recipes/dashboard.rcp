@@ -1,4 +1,0 @@
-(:name dashboard
-       :type github
-       :depends (page-break-lines)
-       :pkgname "rakanalh/emacs-dashboard")
