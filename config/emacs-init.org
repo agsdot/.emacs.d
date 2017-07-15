@@ -10,27 +10,40 @@ Lets make this organized and documented org-mode style
 Here lets do the preliminary setup and put in some good defaults for emacs, including setting some system wide variables.
 
 #+BEGIN_SRC emacs-lisp
-(setq straight-recipe-overrides
-      '((nil . ((straight :type git :host github
-                          :repo "raxod502/straight.el"
-                          :branch "develop"
-                          :files ("straight.el"))))))
-(let ((repos-dir (concat user-emacs-directory "straight/repos/")))
-  (unless (file-exists-p (concat repos-dir "straight.el"))
-    (make-directory repos-dir 'parents)
-    (message "Cloning repository \"straight.el\"...")
-    (unless (= 0
-                (call-process
-                 "git" nil nil nil "clone" "--recursive" "-b" "develop"
-                 "https://github.com/raxod502/straight.el.git"
-                 (expand-file-name
-                  (concat repos-dir "straight.el")))
+;;(setq straight-recipe-overrides
+;;      '((nil . ((straight :type git :host github
+;;                          :repo "raxod502/straight.el"
+;;                          :branch "develop"
+;;                          :files ("straight.el"))))))
+;;(let ((repos-dir (concat user-emacs-directory "straight/repos/")))
+;;  (unless (file-exists-p (concat repos-dir "straight.el"))
+;;    (make-directory repos-dir 'parents)
+;;    (message "Cloning repository \"straight.el\"...")
+;;    (unless (= 0
+;;                (call-process
+;;                 "git" nil nil nil "clone" "--recursive" "-b" "develop"
+;;                 "https://github.com/raxod502/straight.el.git"
+;;                 (expand-file-name
+;;                  (concat repos-dir "straight.el")))
+;;
+;;		 )
+;;      (error "Could not clone straight.el"))
+;;    (message "Cloning repository \"straight.el\"...done"))
+;;  (load (concat repos-dir "straight.el/bootstrap.el")
+;;        nil 'nomessage))
 
-		 )
-      (error "Could not clone straight.el"))
-    (message "Cloning repository \"straight.el\"...done"))
-  (load (concat repos-dir "straight.el/bootstrap.el")
-        nil 'nomessage))
+(let ((bootstrap-file (concat user-emacs-directory "straight/bootstrap.el"))
+      (bootstrap-version 2))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+
 
 (straight-declare-init-finished)
 (straight-use-package 'use-package)
@@ -537,6 +550,7 @@ Here we're going to make emacs a great coding environment.
 ;; got git-gutter working properly with use-package
 ;; https://github.com/hlissner/emacs.d/blob/master/init/init-git.el
 (use-package git-gutter
+  :demand t
   :diminish git-gutter-mode
   :config
   (progn
