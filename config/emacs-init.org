@@ -31,7 +31,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 ;;    (message "Cloning repository \"straight.el\"...done"))
 ;;  (load (concat repos-dir "straight.el/bootstrap.el")
 ;;        nil 'nomessage))
-
+(setq straight-vc-git-default-protocol 'https)
 (let ((bootstrap-file (concat user-emacs-directory "straight/bootstrap.el"))
       (bootstrap-version 2))
   (unless (file-exists-p bootstrap-file)
