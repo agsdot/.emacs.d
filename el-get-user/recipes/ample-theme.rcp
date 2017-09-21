@@ -1,4 +1,0 @@
-(:name ample-theme
-       :type github
-       :pkgname "jordonbiondo/ample-theme"
-       :prepare (add-to-list 'custom-theme-load-path default-directory))

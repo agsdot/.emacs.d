@@ -1,8 +1,9 @@
 # Emacs related files
+.cache/
 .cask/
 elpa/
 el-get/
-.cache/
+straight/
 custom/custom.el
 config/emacs-init.el
 config/emacs-init.elc

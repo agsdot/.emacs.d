@@ -1,4 +1,0 @@
-(:name zenburn-theme
-       :type github
-       :pkgname "bbatsov/zenburn-emacs"
-       :prepare (add-to-list 'custom-theme-load-path default-directory))
