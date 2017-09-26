@@ -116,6 +116,10 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (setq visible-bell 1)
 (menu-bar-mode -1)
 
+(require 'cl-lib)
+(eval-when-compile
+  (require 'cl))
+
 ;; Closing all other buffers in Emacs
 ;; http://stackoverflow.com/a/3417473/2741455
 (defun kill-other-buffers ()
@@ -127,7 +131,8 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
   ;; http://stackoverflow.com/questions/3417438/closing-all-other-buffers-in-emacs
   (mapc 'kill-buffer
     (delq (current-buffer)
-      (remove-if-not 'buffer-file-name (buffer-list))))
+      ;; https://stackoverflow.com/questions/5019724/in-emacs-what-does-this-error-mean-warning-cl-package-required-at-runtime
+      (cl-remove-if-not 'buffer-file-name (buffer-list))))
   ;; http://emacs.stackexchange.com/questions/202/close-all-dired-buffers
   (mapc (lambda (buffer)
     (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
@@ -135,7 +140,10 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
         (buffer-list))
   (custom/kill-buffers "^\\*magit") ;; kill magit buffers
   (custom/kill-buffers "^\\*grep") ;; kill projectile grep
-  (custom/kill-buffers "^\\*pt") ;; kill projectile pt
+  (custom/kill-buffers "^\\*pt-search") ;; kill projectile pt
+  (custom/kill-buffers "^\\*ripgrep-search") ;; kill projectile ripgrep
+  (custom/kill-buffers "^\\*ag search text") ;; kill projectile ag
+  (custom/kill-buffers "^\\*Treemacs") ;; kill Treemacs buffers
 )
 
 ;; https://github.com/magit/magit/issues/2124
@@ -273,12 +281,17 @@ Gotta navigate around emacs more efficiently, and this is how.
       "j"      'prettier
       "l"      'linum-relative-toggle
       "k"      'kill-other-buffers
-      "p"      'projectile-find-file
+      "pp"      'projectile-find-file
+      "pf"      'fzf
       "r"      'counsel-recentf
 
       "qa"     'evil-quit-all
       "qs"     'evil-save-and-close
       "qq"     'evil-quit
+
+      "tt"     'treemacs-toggle
+      "tf"     'treemacs-find-file
+      "oo"     'treemacs-visit-node-default-action
 
       "wa"     'evil-write-all
       "ww"     'evil-write
@@ -329,6 +342,8 @@ Gotta navigate around emacs more efficiently, and this is how.
     (setq projectile-known-projects-file (concat dotemacs-cache-directory "projectile-bookmarks.eld"))
     (setq projectile-require-project-root nil)))
 
+(use-package fzf)
+
 (use-package counsel-projectile
   :config
   (progn
@@ -375,6 +390,41 @@ Gotta navigate around emacs more efficiently, and this is how.
         (dired-copy-file current-path to-path t))
       (neo-buffer--refresh t))
 		))
+
+(use-package treemacs
+  :demand t
+  :config
+  (use-package treemacs-evil
+      :demand t)
+  (setq treemacs-follow-after-init          t
+        treemacs-width                      30
+        treemacs-indentation                2
+        treemacs-git-integration            t
+        treemacs-collapse-dirs              3
+        treemacs-silent-refresh             nil
+        ;;treemacs-change-root-without-asking nil
+        treemacs-change-root-without-asking t
+        treemacs-sorting                    'alphabetic-desc
+        treemacs-show-hidden-files          t
+        treemacs-never-persist              nil
+        ;;treemacs-is-never-other-window      t
+        treemacs-is-never-other-window      nil
+        treemacs-goto-tag-strategy          'refetch-index)
+
+  ;; Update treemacs when finding a file but not for certain modes.
+  ;;(add-hook 'find-file-hook
+  ;;          (lambda ()
+  ;;            (when (not (derived-mode-p 'dashboard-mode))
+  ;;              (treemacs-find-file))))
+
+  ;;(treemacs-follow-mode t)
+  ;;(treemacs-filewatch-mode t)
+  )
+
+(use-package treemacs-projectile
+  :demand t
+  :config
+  (setq treemacs-header-function #'treemacs-projectile-create-header))
 
 (use-package dashboard
   :demand t
@@ -454,6 +504,15 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
     (evil-ex-define-cmd "Q"  'evil-quit)
     (evil-ex-define-cmd "Qa" 'evil-quit-all)
     (evil-ex-define-cmd "QA" 'evil-quit-all)
+
+    ;; ex commands make sure that treemacs is exited from
+    (evil-ex-define-cmd "q"  'evil-quit-all)
+    (evil-ex-define-cmd "q!" 'evil-quit-all)
+    (evil-ex-define-cmd "qa" 'evil-quit-all)
+
+    (evil-ex-define-cmd "wq"  'evil-save-and-quit)
+    (evil-ex-define-cmd "wq!" 'evil-save-and-quit)
+    (evil-ex-define-cmd "wqa" 'evil-save-and-quit)
 
     ;; setup extra keybindings ;;
     ;; Bind DEL and = keys to scrolling up and down
