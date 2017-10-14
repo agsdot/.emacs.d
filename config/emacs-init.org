@@ -345,6 +345,37 @@ Gotta navigate around emacs more efficiently, and this is how.
   (progn
     (counsel-projectile-on)))
 
+(use-package dired-sidebar
+  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+  :commands (dired-sidebar-toggle-sidebar)
+  :config
+  (setq dired-sidebar-use-custom-font t)
+  (setq dired-sidebar-face
+        (cond
+         ((eq system-type 'darwin)
+          '(:family "Helvetica" :height 140))
+         ((eq system-type 'windows-nt)
+          '(:family "Times New Roman" :height 130))
+         (:default
+          '(:family "Arial" :height 140))))
+
+  (use-package all-the-icons-dired
+    ;; M-x all-the-icons-install-fonts
+    :commands (all-the-icons-dired-mode)))
+
+(use-package dired-subtree
+  :commands (dired-subtree-toggle dired-subtree-cycle)
+  :config
+  (setq dired-subtree-line-prefix "_ ")
+  (setq dired-subtree-use-backgrounds nil))
+
+(use-package ace-window
+  :commands (ace-delete-window
+             ace-swap-window
+             ace-delete-other-windows
+             ace-window
+             ace-select-window))
+
 (use-package neotree
   :demand t
   :config
@@ -452,6 +483,8 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
 ;; evil mode setup ;;
 (setq evil-want-C-w-in-emacs-state t)
 (setq evil-default-cursor t)
+(use-package evil-integrations
+  :recipe (evil-integrations :type git :host github :repo "jojojames/evil-integrations"))
 (use-package evil
   :demand t
   :config
@@ -761,6 +794,5 @@ Here we're going to make emacs a great coding environment.
 ** init-last-minute-touches
 Here are some last minute touches.
 #+BEGIN_SRC emacs-lisp
-
 
 #+END_SRC
