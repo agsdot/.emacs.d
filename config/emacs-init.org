@@ -16,17 +16,9 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (defun my/set-gc-threshold ()
   "Reset `gc-cons-threshold' to its default value."
   (setq gc-cons-threshold 800000))
-(setq straight-vc-git-default-protocol 'https)
-(setq straight-recipe-overrides '((nil . ((straight :type git
-                                                    :host github
-                                                    :repo "raxod502/straight.el"
-                                                    :branch "develop"
-                                                    :files ("straight.el"))))))
-;; https://github.com/raxod502/straight.el/issues/41
-;; https://github.com/tummychow/emacs referenced code
-(setq straight-check-for-modifications 'never)
-(let ((bootstrap-file (concat user-emacs-directory "straight/bootstrap.el"))
-      (bootstrap-version 2))
+
+(let ((bootstrap-file (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
+      (bootstrap-version 3))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously
@@ -35,11 +27,16 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
+(setq straight-repository-branch "develop")
+(setq straight-use-package-by-default 1)
+(setq straight-vc-git-default-protocol 'https)
+;; https://github.com/raxod502/straight.el/issues/41
+;; https://github.com/tummychow/emacs referenced code
+(setq straight-check-for-modifications 'never)
 
 (straight-use-package 'use-package)
 
 (setq use-package-always-defer t)
-(setq use-package-always-ensure t)
 
 (setq dotemacs-cache-directory (concat user-emacs-directory ".cache/"))
 (setq no-littering-etc-directory
@@ -84,7 +81,7 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 (use-package deferred)
 
 (use-package undo-tree
-  :recipe (undo-tree :type git :host github :repo "emacsmirror/undo-tree")
+  :straight (undo-tree :type git :host github :repo "emacsmirror/undo-tree")
   :config
   (global-undo-tree-mode t))
 
@@ -196,7 +193,7 @@ Lets make emacs look and behave better.
 
 ;; https://github.com/domtronn/spaceline-all-the-icons.el/issues/45
 (use-package fancy-battery
-  :recipe (fancy-battery :type git :host github :repo "emacsmirror/fancy-battery")
+  :straight (fancy-battery :type git :host github :repo "emacsmirror/fancy-battery")
   :init
   (fancy-battery-mode)
   :config
@@ -229,7 +226,7 @@ Lets make emacs look and behave better.
   (load-theme 'zenburn t))
 
 (use-package seoul256-theme
-  :recipe (seoul256-emacs :type git :host github :repo "agsdot/seoul256-emacs"
+  :straight (seoul256-emacs :type git :host github :repo "agsdot/seoul256-emacs"
                           :upstream (:host github :repo "anandpiyer/seoul256-emacs"))
   :init
   (setq seoul256-background 235)
@@ -546,7 +543,7 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
   (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
 
 (use-package evil-expat
-  :recipe (evil-expat :type git :host github :repo "edkolev/evil-expat")
+  :straight (evil-expat :type git :host github :repo "edkolev/evil-expat")
   :defer 1)
 
 #+END_SRC
