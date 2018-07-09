@@ -431,6 +431,8 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
 (setq evil-default-cursor t)
 (use-package evil
   :demand t
+  :init
+  (setq evil-want-integration nil)
   :config
   (evil-mode 1)
   ;; https://stackoverflow.com/questions/14302171/ctrl-u-in-emacs-when-using-evil-key-bindings
@@ -514,6 +516,12 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
 ;;  ;;:after evil
 ;;  :config
 ;;  (evil-collection-init))
+
+(use-package evil-collection
+  :config
+  :init
+  (evil-collection-init)
+  (setq evil-collection-setup-minibuffer t))
 
 (use-package evil-escape
   :config
