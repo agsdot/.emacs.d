@@ -159,7 +159,11 @@ Lets make emacs look and behave better.
 #+BEGIN_SRC emacs-lisp
 (line-number-mode t)
 (column-number-mode t)
-(global-linum-mode t)
+;; http://ergoemacs.org/emacs/elisp_determine_OS_version.html
+(if (version< emacs-version "26.1")
+    (global-linum-mode t)
+  ;; https://github.crookster.org/macOS-Emacs-26-display-line-numbers-and-me/
+  (global-display-line-numbers-mode 1))
 
 ;; https://github.com/manute/emacs.d/blob/master/init.el
 (use-package smartparens
