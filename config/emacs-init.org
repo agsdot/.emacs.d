@@ -230,8 +230,8 @@ Lets make emacs look and behave better.
   (load-theme 'zenburn t))
 
 (use-package seoul256-theme
-  :straight (seoul256-emacs :type git :host github :repo "agsdot/seoul256-emacs"
-                          :upstream (:host github :repo "anandpiyer/seoul256-emacs"))
+  ;;:straight (seoul256-emacs :type git :host github :repo "agsdot/seoul256-emacs"
+  ;;                        :upstream (:host github :repo "anandpiyer/seoul256-emacs"))
   :init
   (setq seoul256-background 235)
   (load-theme 'seoul256 t))
@@ -280,18 +280,21 @@ Gotta navigate around emacs more efficiently, and this is how.
    "C-l" 'ivy-immediate-done
    "C-w" 'ivy-backward-kill-word)
 
-  (general-define-key
-    :states '(normal motion emacs)
-    :prefix ","
+  (general-create-definer my-comma-leader-def
+    :prefix ",")
+  (general-create-definer my-space-leader-def
+    :prefix "SPC")
+
+  (my-comma-leader-def
+    :keymaps '(normal motion emacs)
     "/"  'evilnc-comment-or-uncomment-lines
     "f"  'my-search-util
     "nd" 'dired-sidebar-toggle-sidebar
     "nf" 'neotree-find
     "nt" 'neotree-toggle)
 
-  (general-define-key
-    :states '(normal motion emacs)
-    :prefix "<SPC>"
+  (my-space-leader-def
+    :keymaps '(normal motion emacs)
     "aj"     'ace-jump-mode
     "av"     'avy-goto-char
     "b"      'ivy-switch-buffer
@@ -317,7 +320,8 @@ Gotta navigate around emacs more efficiently, and this is how.
     "TAB"    'org-cycle
     ";"      'counsel-M-x
     "/"      'evilnc-comment-or-uncomment-lines
-    ))
+    )
+    )
 
 ;; http://emacs.stackexchange.com/questions/17710/use-package-with-config-to-set-variables
 (use-package smex :demand t)
@@ -393,26 +397,7 @@ Gotta navigate around emacs more efficiently, and this is how.
               (user             neo-vc-user-face)
               (t                neo-vc-default-face)))))
   ;; from https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-neotree.el
-
-  ;; from https://github.com/andrewmcveigh/emacs.d
-  ;; get keybindings to work better in neotree with evil
-  (defun neotree-copy-file ()
-    (interactive)
-    (let* ((current-path (neo-buffer--get-filename-current-line))
-           (msg (format "Copy [%s] to: "
-                        (neo-path--file-short-name current-path)))
-           (to-path (read-file-name msg (file-name-directory current-path))))
-      (dired-copy-file current-path to-path t))
-    (neo-buffer--refresh t))
   )
-
-;;(use-package dashboard
-;;  :demand t
-;;  :config
-;;  (setq show-trailing-whitespace nil)
-;;  (dashboard-setup-startup-hook)
-;;  (setq dashboard-items '((recents  . 15)
-;;                          (projects . 5))))
 
 (use-package ace-jump-mode)
 (use-package avy)
@@ -492,34 +477,7 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
     (interactive)
     (next-line 10)
     (evil-scroll-line-down 10)))
-
-  (define-minor-mode neotree-evil
-    "Use NERDTree bindings on neotree."
-    :lighter " NT"
-    :keymap (progn
-              (evil-make-overriding-map neotree-mode-map 'normal t)
-              (evil-define-key 'normal neotree-mode-map
-                "C" 'neotree-change-root
-                "U" 'neotree-select-up-node
-                "r" 'neotree-refresh
-                "o" 'neotree-enter
-                (kbd "<return>") 'neotree-enter
-                "i" 'neotree-enter-horizontal-split
-                "s" 'neotree-enter-vertical-split
-                "n" 'evil-search-next
-                "N" 'evil-search-previous
-                "ma" 'neotree-create-node
-                "mc" 'neotree-copy-file
-                "md" 'neotree-delete-node
-                "mm" 'neotree-rename-node
-                "gg" 'evil-goto-first-line)
-              neotree-mode-map)))
-;;(use-package evil-collection
-;;  :recipe (evil-collection :type git :host github :repo "jojojames/evil-collection")
-;;  ;;:ensure nil
-;;  ;;:after evil
-;;  :config
-;;  (evil-collection-init))
+  )
 
 (use-package evil-collection
   :config
@@ -667,6 +625,7 @@ Here we're going to make emacs a great coding environment.
 (setq css-indent-offset 2)
 
 (use-package rainbow-mode
+  :straight (rainbow-mode :type git :host github :repo "emacsmirror/rainbow-mode")
   :init
   (dolist (hook '(css-mode-hook html-mode-hook))
     (add-hook hook 'rainbow-mode)))
