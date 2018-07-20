@@ -286,6 +286,14 @@ Gotta navigate around emacs more efficiently, and this is how.
     :prefix "SPC")
 
   (my-comma-leader-def
+    :keymaps '(visual)
+    "/"  'evilnc-comment-or-uncomment-lines)
+
+  (my-space-leader-def
+    :keymaps '(visual)
+    "/"  'evilnc-comment-or-uncomment-lines)
+
+  (my-comma-leader-def
     :keymaps '(normal motion emacs)
     "/"  'evilnc-comment-or-uncomment-lines
     "f"  'my-search-util
@@ -513,8 +521,17 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
   (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
 
 (use-package evil-expat
-  :straight (evil-expat :type git :host github :repo "edkolev/evil-expat")
+  ;;:straight (evil-expat :type git :host github :repo "edkolev/evil-expat")
   :defer 1)
+
+;; http://evgeni.io/posts/reversable-ex-only-command/
+(use-package zygospore
+  :commands zygospore-toggle-delete-other-windows
+  :init
+  ;; :config
+  ;; for use in counsel-M-x / smex
+  (defalias 'only 'zygospore-toggle-delete-other-windows)
+  (evil-ex-define-cmd "only" 'zygospore-toggle-delete-other-windows))
 
 #+END_SRC
 
