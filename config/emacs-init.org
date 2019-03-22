@@ -17,8 +17,11 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
   "Reset `gc-cons-threshold' to its default value."
   (setq gc-cons-threshold 800000))
 
-(let ((bootstrap-file (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
-      (bootstrap-version 3))
+(setq straight-repository-branch "develop")
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously
@@ -426,10 +429,10 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
 ;; evil mode setup ;;
 (setq evil-want-C-w-in-emacs-state t)
 (setq evil-default-cursor t)
+(setq evil-want-keybinding nil)
 (use-package evil
   :demand t
   :init
-  (setq evil-want-integration nil)
   :config
   (evil-mode 1)
   ;; https://stackoverflow.com/questions/14302171/ctrl-u-in-emacs-when-using-evil-key-bindings
