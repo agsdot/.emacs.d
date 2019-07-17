@@ -57,7 +57,7 @@
  ("smartparens" . "4d1571019080fec63b11474db32380b5fa4eb418")
  ("smex" . "55aaebe3d793c2c990b39a302eb26c184281c42c")
  ("spaceline" . "ae45a819ea7ae52febb4d7d82170af44dff10f19")
- ("straight.el" . "7f1bf09d6017dc17365bb22ac3af2cbf8f8b76b3")
+ ("straight.el" . "5ad2b56da56272f340b94664da9f8a0ed827ed9a")
  ("swiper" . "e7146e58f94b1c519635596944f008f3ba28b546")
  ("transient" . "9e30038d2d69e4ad0f3333777137af52e4771442")
  ("undo-tree" . "cc7354c04618db7272697d7f8eee9146cda98475")
