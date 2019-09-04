@@ -71,6 +71,8 @@ Here lets do the preliminary setup and put in some good defaults for emacs, incl
 
 ;;(use-package esup)
 
+(use-package diminish)
+
 (use-package f
   :demand t
   :config
@@ -669,6 +671,11 @@ Here we're going to make emacs a great coding environment.
 (use-package vimrc-mode
   :config
   (add-to-list 'auto-mode-alist '(".vim\\(rc\\)?$" . vimrc-mode)))
+
+(use-package color-identifiers-mode
+  :diminish (color-identifiers-mode . "🎨 ")
+  :init
+  (add-hook 'after-init-hook 'global-color-identifiers-mode))
 
 (use-package drag-stuff
   :config
