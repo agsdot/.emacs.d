@@ -672,6 +672,10 @@ Here we're going to make emacs a great coding environment.
   :config
   (add-to-list 'auto-mode-alist '(".vim\\(rc\\)?$" . vimrc-mode)))
 
+(use-package yaml-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
+
 (use-package color-identifiers-mode
   :diminish (color-identifiers-mode . "🎨 ")
   :init
