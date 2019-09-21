@@ -344,6 +344,10 @@ Gotta navigate around emacs more efficiently, and this is how.
 (use-package ivy
   :config
   (ivy-mode 1)
+  ;; https://github.com/abo-abo/swiper/issues/2141
+  ;; Remap C-k in ivy-switch-buffer? #2141
+  (define-key ivy-switch-buffer-map (kbd "C-j") 'ivy-next-line)
+  (define-key ivy-switch-buffer-map (kbd "C-k") 'ivy-previous-line)
   ;; https://github.com/abo-abo/swiper/issues/164
   (define-key
     ivy-switch-buffer-map
