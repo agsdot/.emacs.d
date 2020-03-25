@@ -515,6 +515,7 @@ Lets add the awesome vim/modal editing keybindings. So much more fluid to edit w
 
 (use-package evil-numbers
   :config
+  (define-key evil-normal-state-map (kbd "C-<up>") 'evil-numbers/inc-at-pt)
   (define-key evil-normal-state-map (kbd "C-<right>") 'evil-numbers/inc-at-pt)
   (define-key evil-normal-state-map (kbd "C-<left>") 'evil-numbers/dec-at-pt))
 
@@ -712,5 +713,13 @@ Here we're going to make emacs a great coding environment.
 ** init-last-minute-touches
 Here are some last minute touches.
 #+BEGIN_SRC emacs-lisp
+;;http://www.accidentalrebel.com/posts/minifying-buffer-contents-in-emacs.html
+(defun arebel-minify-buffer-contents()
+  "Minifies the buffer contents by removing whitespaces."
+  (interactive)
+  (delete-whitespace-rectangle (point-min) (point-max))
+  (mark-whole-buffer)
+  (goto-char (point-min))
+  (while (search-forward "\n" nil t) (replace-match "" nil t)))
 
 #+END_SRC
